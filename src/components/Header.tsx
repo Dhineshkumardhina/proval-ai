@@ -14,7 +14,7 @@ import {
   Search,
   Sparkles,
 } from 'lucide-react';
-import { ValuationCase } from '../types/valuation';
+import { ValuationCase, CREDIBILITY_LABELS } from '../types/valuation';
 
 interface HeaderProps {
   cases: ValuationCase[];
@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
-          Demonstration Data / Mock SRO
+          {CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}
         </span>
       </div>
 

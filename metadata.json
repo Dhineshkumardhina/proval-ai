@@ -1,6 +1,6 @@
 {
   "name": "PropVal AI",
-  "description": "Institutional AI-powered collateral valuation, explainability, and credit underwriting engine for housing finance institutions.",
+  "description": "Institutional collateral valuation, explainability, and credit underwriting engine prototype for housing finance institutions.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

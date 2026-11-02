@@ -25,7 +25,7 @@ export const ModelGovernanceView: React.FC = () => {
           </div>
           <div>
             <h2 className="text-sm font-bold text-[#142B4A] uppercase tracking-wide">
-              Model Governance & Algorithmic Audit Blueprint
+              Model Governance & Valuation Architecture Specification
             </h2>
             <p className="text-xs text-[#64748B]">
               Target Architecture: Alignment with NHB & RBI Algorithmic Transparency Guidelines (Design Blueprint)
@@ -35,11 +35,11 @@ export const ModelGovernanceView: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs font-bold text-[#334155] bg-[#F1F5F9] px-2.5 py-1 rounded border border-[#CBD5E1]">
-            Engine: Heuristic Prototype (v0.1.0-alpha)
+            Engine: Provisional Rule-Based (v0.1.0-alpha)
           </span>
           <span className="text-xs font-semibold text-[#B45309] bg-[#FEF3C7] px-2.5 py-1 rounded border border-[#FDE68A] flex items-center gap-1">
             <AlertTriangle className="w-3.5 h-3.5" />
-            Prototype State — Not Independently Verified
+            Audit: Not available (No independent audit performed)
           </span>
         </div>
       </div>
@@ -47,36 +47,45 @@ export const ModelGovernanceView: React.FC = () => {
       {/* Model Performance KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
-          <span className="label-caps text-[#64748B] block text-[10px]">Training Corpus</span>
+          <span className="label-caps text-[#64748B] block text-[10px]">Training Dataset Size</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#64748B] mt-0.5">
-            Not Configured
+            Not available
           </p>
-          <span className="text-[11px] text-[#64748B]">Deterministic rules; no ML corpus ingested</span>
+          <span className="text-[11px] text-[#64748B]">Deterministic rule engine; no ML dataset</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
           <span className="label-caps text-[#64748B] block text-[10px]">Mean Abs % Error (MAPE)</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#D97706] mt-0.5">
-            Not Yet Measured
+            Pending verification
           </p>
-          <span className="text-[11px] text-[#64748B]">Pending evaluation against SRO ground truth</span>
+          <span className="text-[11px] text-[#64748B]">Benchmark against ground truth deeds pending</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
           <span className="label-caps text-[#64748B] block text-[10px]">R² Goodness of Fit</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#64748B] mt-0.5">
-            Pending Evaluation
+            Pending verification
           </p>
-          <span className="text-[11px] text-[#64748B]">Multi-metro empirical benchmarks not yet implemented</span>
+          <span className="text-[11px] text-[#64748B]">Cross-validation benchmark not performed</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
-          <span className="label-caps text-[#64748B] block text-[10px]">Audit Trail Implementation</span>
+          <span className="label-caps text-[#64748B] block text-[10px]">Audit Ledger Implementation</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#142B4A] mt-0.5">
-            Local Prototype
+            Not implemented
           </p>
-          <span className="text-[11px] text-[#64748B]">In-memory log; immutable ledger not implemented</span>
+          <span className="text-[11px] text-[#64748B]">In-memory session log only; cryptographic ledger not implemented</span>
         </div>
+      </div>
+
+      {/* Transparency Disclaimer Notice */}
+      <div className="p-3 bg-[#FEF3C7] border border-[#FDE68A] rounded text-xs text-[#B45309] space-y-1">
+        <p className="font-semibold">Credibility & Transparency Notice:</p>
+        <p>
+          Current valuation estimates are produced exclusively by a provisional rule-based calculation using deterministic scorecard multipliers.
+          Machine learning models, statistical prediction intervals, and cryptographic ledgers are not implemented in this prototype.
+        </p>
       </div>
 
       {/* Indicative Feature Weights Matrix */}

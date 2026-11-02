@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Database, Filter, ExternalLink, CheckCircle, ArrowUpDown } from 'lucide-react';
-import { ComparableDeed } from '../../types/valuation';
+import { ComparableDeed, CREDIBILITY_LABELS } from '../../types/valuation';
 import { formatIndianCurrency } from '../../utils/valuationEngine';
 
 interface ComparablesGridProps {
@@ -36,11 +36,11 @@ export const ComparablesGrid: React.FC<ComparablesGridProps> = ({
                 Sub-Market Comparables ({filteredComps.length})
               </h4>
               <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
-                Synthetic Demo Data
+                Synthetic Demo
               </span>
             </div>
             <p className="text-[11px] text-[#64748B]">
-              Illustrative SRO transactions within micro-market radius (Demonstration Dataset)
+              {CREDIBILITY_LABELS.COMPARABLE_SYNTHETIC}
             </p>
           </div>
         </div>
@@ -69,11 +69,11 @@ export const ComparablesGrid: React.FC<ComparablesGridProps> = ({
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="bg-[#F8FAFC] border-b border-[#CBD5E1] text-[#64748B] label-caps">
-              <th className="py-2.5 px-3 font-semibold">Ref & SRO Deed</th>
+              <th className="py-2.5 px-3 font-semibold">Ref (Synthetic Sample)</th>
               <th className="py-2.5 px-3 font-semibold">Project & Unit</th>
               <th className="py-2.5 px-3 font-semibold">Reg Date</th>
               <th className="py-2.5 px-3 font-semibold text-right">Carpet Area</th>
-              <th className="py-2.5 px-3 font-semibold text-right">Reg Consideration</th>
+              <th className="py-2.5 px-3 font-semibold text-right">Indicative Price</th>
               <th className="py-2.5 px-3 font-semibold text-right">Rate / Sq Ft</th>
               <th className="py-2.5 px-3 font-semibold text-center">Distance</th>
               <th className="py-2.5 px-3 font-semibold text-right">Model Weight</th>
@@ -132,7 +132,7 @@ export const ComparablesGrid: React.FC<ComparablesGridProps> = ({
                         setSelectedDeedModal(comp);
                       }}
                       className="p-1 text-[#64748B] hover:text-[#2563EB] hover:bg-[#F1F5F9] rounded"
-                      title="View Official SRO Deed Extract"
+                      title="View Sample Deed Details (Synthetic)"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                     </button>
@@ -150,7 +150,7 @@ export const ComparablesGrid: React.FC<ComparablesGridProps> = ({
           <div className="bg-white rounded-md border border-[#CBD5E1] shadow-2xl max-w-lg w-full p-4 space-y-3">
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
               <h3 className="text-xs font-bold text-[#142B4A] uppercase">
-                Demonstration SRO Record: {selectedDeedModal.sroRegNo}
+                Synthetic Sample Record: {selectedDeedModal.sroRegNo}
               </h3>
               <button
                 onClick={() => setSelectedDeedModal(null)}

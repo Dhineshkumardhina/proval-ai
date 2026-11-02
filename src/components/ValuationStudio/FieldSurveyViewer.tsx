@@ -15,7 +15,7 @@ import {
   ShieldCheck,
   Check,
 } from 'lucide-react';
-import { ValuationCase, FieldInspectionPhoto } from '../../types/valuation';
+import { ValuationCase, FieldInspectionPhoto, CREDIBILITY_LABELS } from '../../types/valuation';
 
 interface FieldSurveyViewerProps {
   currentCase: ValuationCase;
@@ -34,7 +34,7 @@ export const FieldSurveyViewer: React.FC<FieldSurveyViewerProps> = ({ currentCas
             Site Survey & Structural Inspection
           </span>
           <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
-            Demonstration Media
+            {CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}
           </span>
         </div>
 

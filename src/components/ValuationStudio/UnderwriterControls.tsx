@@ -33,7 +33,7 @@ export const UnderwriterControls: React.FC<UnderwriterControlsProps> = ({
   onReferCommittee,
 }) => {
   const [rationaleNote, setRationaleNote] = useState<string>(
-    'Valuation grounded in 5 comparable SRO sales within 1km. Clear 30-year title chain and high-floor orientation justify baseline assessment.'
+    'Valuation grounded in 5 sample comparables within 1km. Clear 30-year title chain and high-floor orientation justify baseline assessment (synthetic demonstration case).'
   );
   const [showReferModal, setShowReferModal] = useState<boolean>(false);
   const [referReason, setReferReason] = useState<string>('Deviation from circle rate exceeds internal policy threshold (25%).');

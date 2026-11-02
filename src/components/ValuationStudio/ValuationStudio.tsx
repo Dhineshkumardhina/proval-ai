@@ -18,7 +18,7 @@ import {
   Maximize2,
   CheckCircle2,
 } from 'lucide-react';
-import { ValuationCase, ComparableDeed } from '../../types/valuation';
+import { ValuationCase, ComparableDeed, CREDIBILITY_LABELS } from '../../types/valuation';
 import { calculateValuation, formatIndianCurrency } from '../../utils/valuationEngine';
 import { GisMapCanvas } from './GisMapCanvas';
 import { DocumentOcrViewer } from './DocumentOcrViewer';
@@ -81,7 +81,7 @@ export const ValuationStudio: React.FC<ValuationStudioProps> = ({
         valuationResult.netAssessedValue
       )}`
     );
-    setShowNotification('Valuation approved and digital certificate cryptographically logged.');
+    setShowNotification('Valuation approved and recorded in appraisal session log.');
     setTimeout(() => setShowNotification(null), 4000);
   };
 
@@ -140,12 +140,15 @@ export const ValuationStudio: React.FC<ValuationStudioProps> = ({
             >
               {currentCase.statusLabel}
             </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
+              {CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}
+            </span>
           </div>
 
           <p className="text-xs text-[#64748B]">
             Borrower: <span className="text-[#172033] font-medium">{currentCase.borrowerName}</span> | Branch:{' '}
             <span className="text-[#172033] font-medium">{currentCase.branch}</span> | SRO Circle Rate:{' '}
-            <span className="font-mono text-[#172033] font-medium">₹{currentCase.circleRatePerSqFt}/sq ft</span>
+            <span className="font-mono text-[#172033] font-medium">₹{currentCase.circleRatePerSqFt}/sq ft (Demo rate)</span>
           </p>
         </div>
 
@@ -165,7 +168,7 @@ export const ValuationStudio: React.FC<ValuationStudioProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* Metric 1: Assessed Collateral Value */}
         <div className="bg-white p-3 rounded-md border border-[#E2E8F0] shadow-sm border-t-2 border-t-[#2563EB]">
-          <span className="label-caps text-[#64748B] block text-[10px]">Estimated Base Value</span>
+          <span className="label-caps text-[#64748B] block text-[10px]">Provisional Base Value</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#142B4A] mt-0.5">
             {formatIndianCurrency(valuationResult.netAssessedValue, 'short')}
           </p>
@@ -174,15 +177,18 @@ export const ValuationStudio: React.FC<ValuationStudioProps> = ({
           </p>
         </div>
 
-        {/* Metric 2: Heuristic Confidence */}
+        {/* Metric 2: Rule Consistency & Calibrated Uncertainty State */}
         <div className="bg-white p-3 rounded-md border border-[#E2E8F0] shadow-sm border-t-2 border-t-[#0F766E]">
-          <span className="label-caps text-[#64748B] block text-[10px]">Heuristic Confidence</span>
+          <span className="label-caps text-[#64748B] block text-[10px]">Rule Consistency Score</span>
           <p className="text-lg font-bold font-mono tabular-nums text-[#0F766E] mt-0.5">
             {valuationResult.confidenceScorePct}%
           </p>
           <span className="inline-block px-1.5 py-0.2 rounded text-[10px] font-semibold bg-[#F1F5F9] text-[#64748B] border border-[#CBD5E1]">
-            Rule-Based Score
+            Uncalibrated Heuristic
           </span>
+          <p className="text-[9.5px] text-[#94A3B8] mt-1 leading-tight" title="Rule-based indicative range, not a statistical interval">
+            Calibrated Uncertainty: Not available: no calibrated model
+          </p>
         </div>
 
         {/* Metric 3: Rate per Carpet Area */}

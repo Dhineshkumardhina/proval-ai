@@ -16,7 +16,7 @@ import {
   Eye,
   Download,
 } from 'lucide-react';
-import { ValuationCase, DocumentVerificationField } from '../../types/valuation';
+import { ValuationCase, DocumentVerificationField, CREDIBILITY_LABELS } from '../../types/valuation';
 
 interface DocumentOcrViewerProps {
   currentCase: ValuationCase;
@@ -39,7 +39,7 @@ export const DocumentOcrViewer: React.FC<DocumentOcrViewerProps> = ({ currentCas
             Title & OCR Verification Matrix
           </span>
           <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]">
-            Demonstration Data
+            {CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}
           </span>
         </div>
 
@@ -134,7 +134,7 @@ export const DocumentOcrViewer: React.FC<DocumentOcrViewerProps> = ({ currentCas
                     <td className="py-2.5 px-3 text-center">
                       {field.matchStatus === 'MATCHED' ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#DCFCE7] text-[#15803D]">
-                          VERIFIED
+                          MATCHED (DEMO)
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEE2E2] text-[#B91C1C]">
@@ -155,7 +155,7 @@ export const DocumentOcrViewer: React.FC<DocumentOcrViewerProps> = ({ currentCas
             <div className="flex items-center gap-2">
               <Stamp className="w-4 h-4 text-[#B91C1C]" />
               <span className="text-xs font-bold text-[#142B4A] uppercase">
-                GOVERNMENT OF {currentCase.city === 'Bengaluru' ? 'KARNATAKA' : currentCase.city === 'Mumbai' ? 'MAHARASHTRA' : currentCase.city === 'Delhi-NCR' ? 'HARYANA' : 'TELANGANA'} — DEPARTMENT OF REGISTRATION & STAMPS
+                [SYNTHETIC TEMPLATE PREVIEW] MOCK REGISTRATION EXTRACT — NOT A STATUTORY RECORD
               </span>
             </div>
             <span className="text-[10px] font-mono bg-white px-2 py-0.5 rounded border border-[#CBD5E1] text-[#64748B]">

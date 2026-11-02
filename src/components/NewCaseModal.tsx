@@ -41,6 +41,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, onS
 
     const createdCase: ValuationCase = {
       id: newId,
+      dataSource: 'synthetic-demo',
       applicationNo: newAppNo,
       borrowerName,
       cibilScore: 780,
@@ -81,6 +82,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, onS
       comparables: [
         {
           id: `comp-${Date.now()}-1`,
+          dataSource: 'synthetic-demo',
           sroRegNo: `SRO-${city.slice(0, 3).toUpperCase()}-2026-BK1-8411`,
           regDate: '20-Oct-2026',
           propertyName: `${projectName} (Adjacent Wing)`,
@@ -100,7 +102,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, onS
         {
           label: 'SRO Registered Deed',
           applicantDeclared: `BK-1/${Math.floor(1000 + Math.random() * 9000)}/2024`,
-          sroIndexExtract: 'Automated digital registry check passed',
+          sroIndexExtract: 'Simulated registry check template (synthetic demo)',
           matchStatus: 'MATCHED',
         },
         {
@@ -150,7 +152,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, onS
               Intake New Collateral Valuation File
             </h3>
             <p className="text-xs text-[#64748B]">
-              Enter property specifications to immediately trigger algorithmic sub-market hedonic appraisal
+              Enter property specifications to immediately calculate provisional rule-based hedonic valuation
             </p>
           </div>
         </div>
@@ -275,7 +277,7 @@ export const NewCaseModal: React.FC<NewCaseModalProps> = ({ isOpen, onClose, onS
               className="px-4 py-2 font-semibold bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded flex items-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              Run AI Appraisal
+              Run Provisional Valuation
             </button>
           </div>
         </form>

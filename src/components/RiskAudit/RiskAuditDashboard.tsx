@@ -59,7 +59,7 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
             </h2>
           </div>
           <p className="text-xs text-slate-300 mt-0.5">
-            Surveillance of valuation deviations, title encumbrance discrepancies, and scenario stress testing (Prototype)
+            Surveillance of valuation deviations, title encumbrance discrepancies, and deterministic price-shock scenarios (Synthetic Data)
           </p>
         </div>
 
@@ -93,7 +93,7 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-[#2563EB]" />
             <h3 className="text-xs font-bold text-[#142B4A] uppercase tracking-wide">
-              Portfolio Stress Testing & LTV Shock Matrix
+              Deterministic Portfolio Price-Shock Simulator
             </h3>
           </div>
           <span className="text-xs font-semibold text-[#142B4A]">
@@ -123,22 +123,22 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
           </div>
 
           <div className="bg-[#F8FAFC] p-3 rounded border border-[#E2E8F0]">
-            <span className="label-caps text-[#64748B] block text-[10px]">Simulated Stress Loss</span>
+            <span className="label-caps text-[#64748B] block text-[10px]">Deterministic Price-Shock Loss</span>
             <p className="text-lg font-bold font-mono text-[#DC2626] tabular-nums mt-0.5">
               -{formatIndianCurrency(collateralStressLoss, 'short')}
             </p>
             <span className="text-[10px] text-[#64748B]">
-              Deterministic haircut (not statistical VaR)
+              Deterministic price-shock scenario (linear haircut, not statistical VaR)
             </span>
           </div>
 
           <div className="bg-[#F8FAFC] p-3 rounded border border-[#E2E8F0]">
-            <span className="label-caps text-[#64748B] block text-[10px]">Stressed Book LTV</span>
+            <span className="label-caps text-[#64748B] block text-[10px]">Deterministic Stressed LTV</span>
             <p className="text-lg font-bold font-mono text-[#B45309] tabular-nums mt-0.5">
               {(75 / (1 - macroShockPct / 100)).toFixed(1)}%
             </p>
             <span className="text-[10px] text-[#15803D]">
-              Assumes 75.0% baseline LTV
+              Formula: baseline LTV / (1 - shock%)
             </span>
           </div>
         </div>

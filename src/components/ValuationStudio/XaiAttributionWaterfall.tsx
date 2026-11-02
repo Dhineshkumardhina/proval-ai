@@ -22,16 +22,16 @@ export const XaiAttributionWaterfall: React.FC<XaiAttributionWaterfallProps> = (
           </span>
           <div>
             <h4 className="text-xs font-bold text-[#142B4A] uppercase tracking-wide">
-              Hedonic Factor Decomposition & Scorecard Waterfall
+              Hedonic Factor Decomposition & Waterfall
             </h4>
             <p className="text-[11px] text-[#64748B]">
-              Deterministic additive micro-market adjustments (Rule-based scorecard — not gradient-boosted ML)
+              Provisional rule-based estimation: deterministic additive micro-market adjustments (not machine learning)
             </p>
           </div>
         </div>
 
         <span className="text-[11px] font-semibold text-[#334155] bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-[#CBD5E1] flex items-center gap-1">
-          Heuristic Score: {valuation.confidenceScorePct}% (Uncalibrated)
+          Rule Consistency: {valuation.confidenceScorePct}% (Uncalibrated)
         </span>
       </div>
 
@@ -116,14 +116,14 @@ export const XaiAttributionWaterfall: React.FC<XaiAttributionWaterfallProps> = (
         <div>
           <span className="font-semibold text-[#142B4A] flex items-center gap-1.5">
             <ArrowRight className="w-3.5 h-3.5 text-[#2563EB]" />
-            Net Scorecard Assessed Rate:
+            Net Rule-Based Assessed Rate:
           </span>
           <span className="text-[10px] text-[#64748B] block mt-0.5">
-            * Additive adjustments applied to micro-market baseline (Demonstration Rule Engine)
+            * Additive adjustments applied to micro-market baseline (Provisional rule-based estimation)
           </span>
         </div>
         <div className="text-right font-mono font-bold tabular-nums text-sm text-[#142B4A]">
-          ₹{valuation.aiAdjustedRatePerSqFt.toLocaleString('en-IN')}{' '}
+          ₹{(valuation.ruleAdjustedRatePerSqFt ?? valuation.aiAdjustedRatePerSqFt).toLocaleString('en-IN')}{' '}
           <span className="text-[11px] text-[#64748B] font-normal">/ sq ft carpet</span>
         </div>
       </div>

@@ -4,9 +4,9 @@
  * 
  * PropVal AI Institutional Valuation & Underwriting Math Engine
  * 
- * NOTE: This is a deterministic rule-based calculation engine implementing
- * hedonic scorecard adjustments for property valuation and credit appraisal.
- * It is NOT a trained machine learning model or black-box predictive AI.
+ * NOTE: This is a provisional rule-based estimation engine implementing
+ * deterministic hedonic scorecard adjustments for property valuation and credit appraisal.
+ * It is NOT a trained machine learning model, deep neural network, or predictive AI.
  * Designed for Indian Housing Finance Companies (HFCs) and Bank Credit Committees.
  */
 
@@ -29,6 +29,8 @@ export interface ValuationResult {
   carpetAreaSqFt: number;
   superBuiltUpAreaSqFt: number;
   unadjustedRatePerSqFt: number;
+  ruleAdjustedRatePerSqFt: number;
+  /** @deprecated Alias for ruleAdjustedRatePerSqFt for backward compatibility */
   aiAdjustedRatePerSqFt: number;
   circleRatePerSqFt: number;
   grossMarketValue: number;
@@ -121,10 +123,11 @@ export function calculateValuation(params: ValuationInputParams): ValuationResul
     amenitiesPremium -
     Math.abs(structuralDepreciation);
 
-  const aiAdjustedRatePerSqFt = Math.max(1000, baseMarketRatePerSqFt + netAdjustment);
+  const ruleAdjustedRatePerSqFt = Math.max(1000, baseMarketRatePerSqFt + netAdjustment);
+  const aiAdjustedRatePerSqFt = ruleAdjustedRatePerSqFt;
 
   // Gross Valuation (carpet area based)
-  const grossMarketValue = Math.round(aiAdjustedRatePerSqFt * carpetAreaSqFt);
+  const grossMarketValue = Math.round(ruleAdjustedRatePerSqFt * carpetAreaSqFt);
 
   // Underwriter hair-cut adjustment & legal risk penalty (safely bounded)
   const safeHaircutPct = Math.max(-90, Math.min(50, isNaN(underwriterHaircutPct) ? 0 : underwriterHaircutPct));
@@ -155,7 +158,7 @@ export function calculateValuation(params: ValuationInputParams): ValuationResul
     {
       factor: 'Micro-Market Baseline',
       impactPerSqFt: baseMarketRatePerSqFt,
-      description: 'SRO registered median sales within 1.0 km radius in past 180 days',
+      description: 'Indicative micro-market baseline rate (synthetic benchmark, not verified transaction evidence)',
       category: 'neutral' as const,
     },
     {
@@ -208,6 +211,7 @@ export function calculateValuation(params: ValuationInputParams): ValuationResul
     carpetAreaSqFt,
     superBuiltUpAreaSqFt,
     unadjustedRatePerSqFt: baseMarketRatePerSqFt,
+    ruleAdjustedRatePerSqFt,
     aiAdjustedRatePerSqFt,
     circleRatePerSqFt,
     grossMarketValue,
