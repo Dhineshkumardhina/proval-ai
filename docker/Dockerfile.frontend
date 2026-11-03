@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1
+# -----------------------------------------------------------------------------
+# PropVal AI Institutional Frontend — Production Multi-Stage Dockerfile
+# Stage 1: Build Vite / React 19 SPA
+# Stage 2: Serve static artifacts with hardened unprivileged Nginx Alpine
+# -----------------------------------------------------------------------------
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Cache package dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy application source code
+COPY . .
+
+# Build arguments for environment configuration
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
+# Build production bundle with Vite
+RUN npm run build
+
+# -----------------------------------------------------------------------------
+# Production Web Server Stage (Unprivileged Non-Root Nginx)
+# -----------------------------------------------------------------------------
+FROM nginxinc/nginx-unprivileged:alpine AS runtime
+
+# Remove default static assets
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy compiled static assets from builder stage with unprivileged ownership
+COPY --chown=101:101 --from=builder /app/dist /usr/share/nginx/html
+
+# Copy production nginx configuration
+COPY --chown=101:101 docker/nginx.conf /etc/nginx/nginx.conf
+
+# Switch explicitly to unprivileged user (UID 101)
+USER 101
+
+EXPOSE 8080 8443
+
+# Healthcheck testing Nginx availability on unprivileged port
+HEALTHCHECK --interval=15s --timeout=3s --retries=3 \
+    CMD wget -qO- http://localhost:8080/nginx-health || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

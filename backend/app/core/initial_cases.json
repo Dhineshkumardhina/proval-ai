@@ -1,0 +1,838 @@
+[
+  {
+    "id": "case-blr-89412",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-BLR-2026-89412",
+    "borrowerName": "Rajesh & Priya Sengupta",
+    "coBorrowerName": "Priya Sengupta",
+    "cibilScore": 785,
+    "loanRequested": 10500000,
+    "declaredAgreementValue": 14500000,
+    "propertyType": "High-Rise Apartment",
+    "unitAddress": "Flat B-1402, 14th Floor, Tower B, Sobha Dream Acres",
+    "projectName": "Sobha Dream Acres",
+    "locality": "Panathur-Balagere Road, Whitefield",
+    "city": "Bengaluru",
+    "pincode": "560087",
+    "branch": "Marathahalli Corporate Lending Branch",
+    "carpetAreaSqFt": 1215,
+    "superBuiltUpAreaSqFt": 1585,
+    "floorNo": 14,
+    "totalFloors": 18,
+    "ageYears": 2,
+    "roadWidthFt": 60,
+    "circleRatePerSqFt": 7200,
+    "baseMarketRatePerSqFt": 9850,
+    "floorRiseFactor": 350,
+    "roadWidthFactor": 280,
+    "amenitiesPremium": 520,
+    "structuralDepreciation": 120,
+    "status": "READY_FOR_APPROVAL",
+    "statusLabel": "Ready for Underwriter Sign-off",
+    "underwriterHaircutPct": 0,
+    "distressDiscountPct": 18,
+    "ltvRatioPct": 75,
+    "legalRiskPenaltyPct": 0,
+    "assignedUnderwriter": "V. Sundaram (Sr. Underwriter - Tech Risk)",
+    "createdAt": "28-Oct-2026",
+    "lastUpdated": "01-Nov-2026 18:30 IST",
+    "reraRegistration": "PRM/KA/RERA/1251/446/PR/171014/000641",
+    "bbmpPlanApprovalNo": "BBMP/ADDL.DIR/JD(S)/LP/0214/2021-22",
+    "titleChainYears": 32,
+    "encumbranceStatus": "NIL_ENCUMBRANCE",
+    "comparables": [
+      {
+        "id": "comp-1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-VRT-2026-BK1-11842",
+        "regDate": "18-Oct-2026",
+        "propertyName": "Sobha Dream Acres (Wing C-1204)",
+        "unitNo": "C-1204",
+        "carpetAreaSqFt": 1210,
+        "superBuiltUpAreaSqFt": 1580,
+        "registeredPrice": 13200000,
+        "ratePerSqFt": 10909,
+        "distanceMeters": 120,
+        "similarityScorePct": 96,
+        "weightInEstimate": 0.35,
+        "floor": 12,
+        "coordinates": {
+          "x": 48,
+          "y": 46
+        }
+      },
+      {
+        "id": "comp-2",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-VRT-2026-BK1-09411",
+        "regDate": "24-Sep-2026",
+        "propertyName": "Prestige Lakeside Habitat (Tower 11-1502)",
+        "unitNo": "11-1502",
+        "carpetAreaSqFt": 1280,
+        "superBuiltUpAreaSqFt": 1675,
+        "registeredPrice": 14150000,
+        "ratePerSqFt": 11054,
+        "distanceMeters": 650,
+        "similarityScorePct": 92,
+        "weightInEstimate": 0.25,
+        "floor": 15,
+        "coordinates": {
+          "x": 62,
+          "y": 38
+        }
+      },
+      {
+        "id": "comp-3",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-KRP-2026-BK1-08102",
+        "regDate": "09-Aug-2026",
+        "propertyName": "Brigade Cornerstone Utopia (Serene-0901)",
+        "unitNo": "S-0901",
+        "carpetAreaSqFt": 1190,
+        "superBuiltUpAreaSqFt": 1550,
+        "registeredPrice": 12700000,
+        "ratePerSqFt": 10672,
+        "distanceMeters": 920,
+        "similarityScorePct": 88,
+        "weightInEstimate": 0.2,
+        "floor": 9,
+        "coordinates": {
+          "x": 35,
+          "y": 64
+        }
+      },
+      {
+        "id": "comp-4",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-VRT-2026-BK1-06399",
+        "regDate": "14-Jul-2026",
+        "propertyName": "Godrej Air NXT (Wing A-1103)",
+        "unitNo": "A-1103",
+        "carpetAreaSqFt": 1240,
+        "superBuiltUpAreaSqFt": 1620,
+        "registeredPrice": 13500000,
+        "ratePerSqFt": 10887,
+        "distanceMeters": 1400,
+        "similarityScorePct": 84,
+        "weightInEstimate": 0.12,
+        "floor": 11,
+        "coordinates": {
+          "x": 74,
+          "y": 72
+        }
+      },
+      {
+        "id": "comp-5",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-KRP-2026-BK1-04112",
+        "regDate": "02-Jun-2026",
+        "propertyName": "Assetz Marq 3.0 (Tower 4-0702)",
+        "unitNo": "T4-0702",
+        "carpetAreaSqFt": 1205,
+        "superBuiltUpAreaSqFt": 1570,
+        "registeredPrice": 12800000,
+        "ratePerSqFt": 10622,
+        "distanceMeters": 1850,
+        "similarityScorePct": 79,
+        "weightInEstimate": 0.08,
+        "floor": 7,
+        "coordinates": {
+          "x": 22,
+          "y": 32
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "SRO Registered Document No",
+        "applicantDeclared": "BK-1/11492/2024 (SRO Varthur)",
+        "sroIndexExtract": "BK-1/11492/2024 Simulated match against Kaveri 2.0 template (synthetic demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Carpet Area (RERA Mandate)",
+        "applicantDeclared": "1,215 sq ft (112.87 sq m)",
+        "sroIndexExtract": "1,215 sq ft (Sanction Schedule C Sheet 4 - Demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Stamp Duty Paid Consideration",
+        "applicantDeclared": "₹1,45,00,000 (Agreement for Sale)",
+        "sroIndexExtract": "₹1,42,80,000 (Indexed consideration value - Demo)",
+        "matchStatus": "MATCHED",
+        "notes": "Minor variance ₹2.2L within 1.5% acceptable stamp discount band"
+      },
+      {
+        "label": "Khata Status (Revenue Dept)",
+        "applicantDeclared": "e-Khata Certificate No. BBMP/EZ/KH/4412",
+        "sroIndexExtract": "e-Khata simulated active with zero tax dues (Demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Encumbrance Certificate (30 Years)",
+        "applicantDeclared": "Nil Encumbrance (Form 15 issued 2026)",
+        "sroIndexExtract": "Search verified from 1994 to 2026: No prior mortgage (Demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Occupancy Certificate (OC)",
+        "applicantDeclared": "OC Issued: BBMP/OC/2023/1892",
+        "sroIndexExtract": "Full OC on record with Bruhat Bengaluru Mahanagara Palike (Demo)",
+        "matchStatus": "MATCHED"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-1",
+        "title": "Building Elevation & Tower B Entrance",
+        "category": "Exterior",
+        "latLong": "12.9348° N, 77.7214° E",
+        "capturedAt": "30-Oct-2026 11:24 IST",
+        "surveyor": "Kishore Gowda (ID: INSP-BLR-089)",
+        "surveyorId": "INSP-BLR-089",
+        "status": "VERIFIED",
+        "description": "Pristine 18-storey tower façade, paved dual access road, functioning fire hydrants verified.",
+        "imageUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "id": "photo-2",
+        "title": "Unit B-1402 Living & Balcony View",
+        "category": "Interior",
+        "latLong": "12.9349° N, 77.7215° E",
+        "capturedAt": "30-Oct-2026 11:42 IST",
+        "surveyor": "Kishore Gowda (ID: INSP-BLR-089)",
+        "surveyorId": "INSP-BLR-089",
+        "status": "VERIFIED",
+        "description": "Vitrified tile flooring, unobstructed eastern orientation, modular woodwork completed.",
+        "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "id": "photo-3",
+        "title": "60-Foot Approach Road & Gated Barrier",
+        "category": "Surroundings",
+        "latLong": "12.9341° N, 77.7208° E",
+        "capturedAt": "30-Oct-2026 12:05 IST",
+        "surveyor": "Kishore Gowda (ID: INSP-BLR-089)",
+        "surveyorId": "INSP-BLR-089",
+        "status": "VERIFIED",
+        "description": "60ft bituminous double-lane road, no unauthorized encroachments, 1.2km to upcoming Blue Line Metro.",
+        "imageUrl": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "id": "photo-4",
+        "title": "Electrical Substation & Backup Generator",
+        "category": "Structural",
+        "latLong": "12.9344° N, 77.7210° E",
+        "capturedAt": "30-Oct-2026 12:18 IST",
+        "surveyor": "Kishore Gowda (ID: INSP-BLR-089)",
+        "surveyorId": "INSP-BLR-089",
+        "status": "VERIFIED",
+        "description": "Dual Cummins 500kVA DG sync panel, BESCOM dedicated 11kV transformer operational.",
+        "imageUrl": "https://images.unsplash.com/photo-1584467541268-b040f83be3fd?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "30-Oct-2026 14:15 - Field survey record submitted (demonstration sample).",
+      "31-Oct-2026 09:40 - Mock Kaveri 2.0 deed verification simulation logged with 0 discrepancies.",
+      "01-Nov-2026 11:10 - Valuation Engine v0.1.0-alpha evaluated collateral worth ₹1,42,50,000."
+    ]
+  },
+  {
+    "id": "case-mum-44120",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-MUM-2026-44120",
+    "borrowerName": "Dr. Ananya Mukherjee",
+    "coBorrowerName": "Kunal Mukherjee",
+    "cibilScore": 812,
+    "loanRequested": 28000000,
+    "declaredAgreementValue": 39000000,
+    "propertyType": "High-Rise Apartment",
+    "unitAddress": "Flat Somerset 1804, 18th Floor, Hiranandani Gardens",
+    "projectName": "Hiranandani Gardens Somerset",
+    "locality": "Powai, Central Mumbai Suburbs",
+    "city": "Mumbai",
+    "pincode": "400076",
+    "branch": "Bandra-Kurla Complex (BKC) Branch",
+    "carpetAreaSqFt": 1480,
+    "superBuiltUpAreaSqFt": 1920,
+    "floorNo": 18,
+    "totalFloors": 24,
+    "ageYears": 5,
+    "roadWidthFt": 80,
+    "circleRatePerSqFt": 22500,
+    "baseMarketRatePerSqFt": 26800,
+    "floorRiseFactor": 850,
+    "roadWidthFactor": 420,
+    "amenitiesPremium": 1100,
+    "structuralDepreciation": 320,
+    "status": "REVIEW_REQUIRED",
+    "statusLabel": "Review Required (High Deviation)",
+    "underwriterHaircutPct": -3,
+    "distressDiscountPct": 20,
+    "ltvRatioPct": 72,
+    "legalRiskPenaltyPct": 0,
+    "assignedUnderwriter": "Farhan Merchant (Chief Credit Officer)",
+    "createdAt": "26-Oct-2026",
+    "lastUpdated": "01-Nov-2026 14:15 IST",
+    "reraRegistration": "P51800001429",
+    "bbmpPlanApprovalNo": "MCGM/EB/4401/WS/AP",
+    "titleChainYears": 40,
+    "encumbranceStatus": "NIL_ENCUMBRANCE",
+    "comparables": [
+      {
+        "id": "comp-m1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-KUR-2026-BK1-04918",
+        "regDate": "12-Oct-2026",
+        "propertyName": "Hiranandani Gardens (Kew 1902)",
+        "unitNo": "K-1902",
+        "carpetAreaSqFt": 1465,
+        "superBuiltUpAreaSqFt": 1900,
+        "registeredPrice": 42000000,
+        "ratePerSqFt": 28668,
+        "distanceMeters": 180,
+        "similarityScorePct": 95,
+        "weightInEstimate": 0.38,
+        "floor": 19,
+        "coordinates": {
+          "x": 50,
+          "y": 48
+        }
+      },
+      {
+        "id": "comp-m2",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-KUR-2026-BK1-03221",
+        "regDate": "15-Sep-2026",
+        "propertyName": "L&T Emerald Isle (Tower 7-1601)",
+        "unitNo": "T7-1601",
+        "carpetAreaSqFt": 1510,
+        "superBuiltUpAreaSqFt": 1960,
+        "registeredPrice": 43500000,
+        "ratePerSqFt": 28807,
+        "distanceMeters": 850,
+        "similarityScorePct": 91,
+        "weightInEstimate": 0.28,
+        "floor": 16,
+        "coordinates": {
+          "x": 65,
+          "y": 35
+        }
+      },
+      {
+        "id": "comp-m3",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-AND-2026-BK1-02109",
+        "regDate": "28-Jul-2026",
+        "propertyName": "Kanakia Silicon Valley (Wing B-1404)",
+        "unitNo": "B-1404",
+        "carpetAreaSqFt": 1420,
+        "superBuiltUpAreaSqFt": 1850,
+        "registeredPrice": 39500000,
+        "ratePerSqFt": 27816,
+        "distanceMeters": 1200,
+        "similarityScorePct": 86,
+        "weightInEstimate": 0.22,
+        "floor": 14,
+        "coordinates": {
+          "x": 32,
+          "y": 68
+        }
+      },
+      {
+        "id": "comp-m4",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-KUR-2026-BK1-01188",
+        "regDate": "04-Jun-2026",
+        "propertyName": "Godrej Urban Park (Tower 2-1102)",
+        "unitNo": "T2-1102",
+        "carpetAreaSqFt": 1390,
+        "superBuiltUpAreaSqFt": 1810,
+        "registeredPrice": 37800000,
+        "ratePerSqFt": 27194,
+        "distanceMeters": 1650,
+        "similarityScorePct": 80,
+        "weightInEstimate": 0.12,
+        "floor": 11,
+        "coordinates": {
+          "x": 75,
+          "y": 62
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "SRO Registered Document No",
+        "applicantDeclared": "BK-1/44910/2021 (SRO Kurla)",
+        "sroIndexExtract": "BK-1/44910/2021 Simulated match in IGR template (synthetic demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Carpet Area (MOFA / RERA)",
+        "applicantDeclared": "1,480 sq ft",
+        "sroIndexExtract": "1,480 sq ft (Includes 140 sq ft enclosed balcony - Demo)",
+        "matchStatus": "MATCHED",
+        "notes": "Enclosed balcony regularized under MCGM Circular 2018"
+      },
+      {
+        "label": "Stamp Duty Paid Consideration",
+        "applicantDeclared": "₹3,90,00,000",
+        "sroIndexExtract": "₹3,75,00,000 (Past registry consideration - Demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Society Share Certificate",
+        "applicantDeclared": "Somerset CHSL Share Cert #419",
+        "sroIndexExtract": "Valid share certificate simulated, no dues from CHS (Demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Encumbrance Certificate",
+        "applicantDeclared": "Nil Encumbrance search report submitted",
+        "sroIndexExtract": "Clean search report from 1986 to 2026 simulated (Demo)",
+        "matchStatus": "MATCHED"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-m1",
+        "title": "Hiranandani Somerset Classical Façade",
+        "category": "Exterior",
+        "latLong": "19.1197° N, 72.9056° E",
+        "capturedAt": "29-Oct-2026 15:10 IST",
+        "surveyor": "Mahesh Patil (ID: INSP-MUM-114)",
+        "surveyorId": "INSP-MUM-114",
+        "status": "VERIFIED",
+        "description": "Neoclassical architectural tower with impeccably maintained landscaping and security.",
+        "imageUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "id": "photo-m2",
+        "title": "Living Room Facing Powai Lake",
+        "category": "Interior",
+        "latLong": "19.1198° N, 72.9058° E",
+        "capturedAt": "29-Oct-2026 15:28 IST",
+        "surveyor": "Mahesh Patil (ID: INSP-MUM-114)",
+        "surveyorId": "INSP-MUM-114",
+        "status": "VERIFIED",
+        "description": "Italian marble flooring, unhindered lake panorama, central air conditioning installed.",
+        "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "29-Oct-2026 16:30 - Physical inspection confirmed superior maintenance and premium view score.",
+      "31-Oct-2026 11:20 - Automated Ready Reckoner benchmark calculated +28.2% premium over RR base."
+    ]
+  },
+  {
+    "id": "case-del-11893",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-DEL-2026-11893",
+    "borrowerName": "Vikramjit Singh Khurana",
+    "coBorrowerName": "Simran Khurana",
+    "cibilScore": 742,
+    "loanRequested": 55000000,
+    "declaredAgreementValue": 72000000,
+    "propertyType": "Independent Floor",
+    "unitAddress": "Plot 418, 2nd Floor, DLF Phase 5, Golf Course Road",
+    "projectName": "DLF Luxury Builder Floors",
+    "locality": "Sector 54, Golf Course Road",
+    "city": "Delhi-NCR",
+    "pincode": "122002",
+    "branch": "Gurugram Cyber City Corporate Hub",
+    "carpetAreaSqFt": 2680,
+    "superBuiltUpAreaSqFt": 3450,
+    "floorNo": 2,
+    "totalFloors": 4,
+    "ageYears": 1,
+    "roadWidthFt": 84,
+    "circleRatePerSqFt": 18000,
+    "baseMarketRatePerSqFt": 25400,
+    "floorRiseFactor": 200,
+    "roadWidthFactor": 550,
+    "amenitiesPremium": 800,
+    "structuralDepreciation": 50,
+    "status": "HIGH_ALERT",
+    "statusLabel": "Critical Alert (Unauthorized Extension)",
+    "underwriterHaircutPct": -10,
+    "distressDiscountPct": 25,
+    "ltvRatioPct": 65,
+    "legalRiskPenaltyPct": 8,
+    "assignedUnderwriter": "Harpreet Singh (Chief Risk Committee)",
+    "createdAt": "24-Oct-2026",
+    "lastUpdated": "01-Nov-2026 16:45 IST",
+    "reraRegistration": "HRERA-PKL-GGM-112-2023",
+    "bbmpPlanApprovalNo": "DTCP/STP/GGM/2022/991",
+    "titleChainYears": 30,
+    "encumbranceStatus": "ACTIVE_CHARGE",
+    "comparables": [
+      {
+        "id": "comp-d1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-GGM-2026-BK1-09112",
+        "regDate": "02-Oct-2026",
+        "propertyName": "Plot 402 DLF Ph 5 (1st Floor)",
+        "unitNo": "Floor 1",
+        "carpetAreaSqFt": 2650,
+        "superBuiltUpAreaSqFt": 3400,
+        "registeredPrice": 68500000,
+        "ratePerSqFt": 25849,
+        "distanceMeters": 250,
+        "similarityScorePct": 94,
+        "weightInEstimate": 0.45,
+        "floor": 1,
+        "coordinates": {
+          "x": 52,
+          "y": 50
+        }
+      },
+      {
+        "id": "comp-d2",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-GGM-2026-BK1-07441",
+        "regDate": "11-Aug-2026",
+        "propertyName": "Plot 388 DLF Ph 5 (3rd Floor)",
+        "unitNo": "Floor 3",
+        "carpetAreaSqFt": 2700,
+        "superBuiltUpAreaSqFt": 3500,
+        "registeredPrice": 71000000,
+        "ratePerSqFt": 26296,
+        "distanceMeters": 410,
+        "similarityScorePct": 90,
+        "weightInEstimate": 0.35,
+        "floor": 3,
+        "coordinates": {
+          "x": 42,
+          "y": 62
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "DTCP Sanctioned Building Plan",
+        "applicantDeclared": "Sanctioned 4-floor stilt parking plan DTCP-991",
+        "sroIndexExtract": "Sanctioned Stilt + 4 Floors. Unsanctioned rear balcony overhang detected in satellite",
+        "matchStatus": "DISCREPANCY",
+        "notes": "Satellite & survey cross-check flagged 240 sq ft rear terrace encroachment"
+      },
+      {
+        "label": "Encumbrance Status",
+        "applicantDeclared": "Nil Encumbrance claimed by applicant",
+        "sroIndexExtract": "Caution: Prior builder bridge-loan charge not fully satisfied with HDFC",
+        "matchStatus": "DISCREPANCY",
+        "notes": "NOC / Deed of Release pending from prior consortium banker"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-d1",
+        "title": "Front Elevation & Stilt Parking",
+        "category": "Exterior",
+        "latLong": "28.4419° N, 77.0984° E",
+        "capturedAt": "28-Oct-2026 10:15 IST",
+        "surveyor": "Devender Sharma (ID: INSP-DEL-041)",
+        "surveyorId": "INSP-DEL-041",
+        "status": "CAUTION_NOTED",
+        "description": "Rear cantilever extension exceeds standard setback by 1.8 meters.",
+        "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "28-Oct-2026 12:40 - Physical survey flagged rear setback violation.",
+      "30-Oct-2026 17:15 - Legal search found unsatisfied banker charge."
+    ]
+  },
+  {
+    "id": "case-hyd-90214",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-HYD-2026-90214",
+    "borrowerName": "K. Venkat Raman & Swapna",
+    "coBorrowerName": "Swapna K.",
+    "cibilScore": 798,
+    "loanRequested": 19000000,
+    "declaredAgreementValue": 26500000,
+    "propertyType": "High-Rise Apartment",
+    "unitAddress": "Flat A-2201, 22nd Floor, My Home Bhooja",
+    "projectName": "My Home Bhooja",
+    "locality": "Gachibowli, HITEC City",
+    "city": "Hyderabad",
+    "pincode": "500081",
+    "branch": "Madhapur Financial District Branch",
+    "carpetAreaSqFt": 1890,
+    "superBuiltUpAreaSqFt": 2460,
+    "floorNo": 22,
+    "totalFloors": 36,
+    "ageYears": 3,
+    "roadWidthFt": 100,
+    "circleRatePerSqFt": 8400,
+    "baseMarketRatePerSqFt": 13200,
+    "floorRiseFactor": 600,
+    "roadWidthFactor": 400,
+    "amenitiesPremium": 750,
+    "structuralDepreciation": 150,
+    "status": "READY_FOR_APPROVAL",
+    "statusLabel": "Validated / Low Risk",
+    "underwriterHaircutPct": 0,
+    "distressDiscountPct": 18,
+    "ltvRatioPct": 75,
+    "legalRiskPenaltyPct": 0,
+    "assignedUnderwriter": "Swathi Reddy (Senior Credit Manager)",
+    "createdAt": "29-Oct-2026",
+    "lastUpdated": "01-Nov-2026 12:00 IST",
+    "reraRegistration": "P02400000021",
+    "bbmpPlanApprovalNo": "GHMC/2019/LP/4102",
+    "titleChainYears": 35,
+    "encumbranceStatus": "NIL_ENCUMBRANCE",
+    "comparables": [
+      {
+        "id": "comp-h1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-SER-2026-BK1-08192",
+        "regDate": "15-Oct-2026",
+        "propertyName": "My Home Bhooja (Block C-1801)",
+        "unitNo": "C-1801",
+        "carpetAreaSqFt": 1880,
+        "superBuiltUpAreaSqFt": 2450,
+        "registeredPrice": 27800000,
+        "ratePerSqFt": 14787,
+        "distanceMeters": 100,
+        "similarityScorePct": 97,
+        "weightInEstimate": 0.4,
+        "floor": 18,
+        "coordinates": {
+          "x": 50,
+          "y": 50
+        }
+      },
+      {
+        "id": "comp-h2",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-SER-2026-BK1-06214",
+        "regDate": "20-Sep-2026",
+        "propertyName": "Jayabheri The Peak (Tower 2-2004)",
+        "unitNo": "T2-2004",
+        "carpetAreaSqFt": 1950,
+        "superBuiltUpAreaSqFt": 2550,
+        "registeredPrice": 28900000,
+        "ratePerSqFt": 14820,
+        "distanceMeters": 750,
+        "similarityScorePct": 91,
+        "weightInEstimate": 0.3,
+        "floor": 20,
+        "coordinates": {
+          "x": 65,
+          "y": 45
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "SRO Registered Document No",
+        "applicantDeclared": "BK-1/8842/2023 (SRO Serilingampally)",
+        "sroIndexExtract": "Simulated match in Dharani template (synthetic demo)",
+        "matchStatus": "MATCHED"
+      },
+      {
+        "label": "Carpet Area (RERA)",
+        "applicantDeclared": "1,890 sq ft",
+        "sroIndexExtract": "1,890 sq ft matched with registered deed (Demo)",
+        "matchStatus": "MATCHED"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-h1",
+        "title": "Bhooja High-Rise Tower & Landscaping",
+        "category": "Exterior",
+        "latLong": "17.4399° N, 78.3752° E",
+        "capturedAt": "30-Oct-2026 14:00 IST",
+        "surveyor": "Praveen Rao (ID: INSP-HYD-065)",
+        "surveyorId": "INSP-HYD-065",
+        "status": "VERIFIED",
+        "description": "Elite 36-storey luxury development, zero construction defects observed.",
+        "imageUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "30-Oct-2026 16:00 - Survey completed with zero issues. Clear title verified."
+    ]
+  },
+  {
+    "id": "case-pun-66301",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-PUN-2026-66301",
+    "borrowerName": "Nitin Deshmukh",
+    "coBorrowerName": "Sneha Deshmukh",
+    "cibilScore": 760,
+    "loanRequested": 5800000,
+    "declaredAgreementValue": 7800000,
+    "propertyType": "High-Rise Apartment",
+    "unitAddress": "Tower Coral-0703, 7th Floor, Godrej 24",
+    "projectName": "Godrej 24",
+    "locality": "Hinjewadi Phase 1, IT Park Corridor",
+    "city": "Pune",
+    "pincode": "411057",
+    "branch": "Shivajinagar Pune Hub",
+    "carpetAreaSqFt": 780,
+    "superBuiltUpAreaSqFt": 1020,
+    "floorNo": 7,
+    "totalFloors": 14,
+    "ageYears": 2,
+    "roadWidthFt": 60,
+    "circleRatePerSqFt": 6100,
+    "baseMarketRatePerSqFt": 8400,
+    "floorRiseFactor": 150,
+    "roadWidthFactor": 200,
+    "amenitiesPremium": 350,
+    "structuralDepreciation": 80,
+    "status": "READY_FOR_APPROVAL",
+    "statusLabel": "Ready for Underwriter Sign-off",
+    "underwriterHaircutPct": 0,
+    "distressDiscountPct": 18,
+    "ltvRatioPct": 75,
+    "legalRiskPenaltyPct": 0,
+    "assignedUnderwriter": "Amol Kulkarni (Credit Underwriter)",
+    "createdAt": "27-Oct-2026",
+    "lastUpdated": "01-Nov-2026 15:00 IST",
+    "reraRegistration": "P52100001089",
+    "bbmpPlanApprovalNo": "PMRDA/BP/2021/841",
+    "titleChainYears": 30,
+    "encumbranceStatus": "NIL_ENCUMBRANCE",
+    "comparables": [
+      {
+        "id": "comp-p1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-MUL-2026-BK1-05120",
+        "regDate": "10-Oct-2026",
+        "propertyName": "Godrej 24 (Tower Coral-0502)",
+        "unitNo": "C-0502",
+        "carpetAreaSqFt": 775,
+        "superBuiltUpAreaSqFt": 1015,
+        "registeredPrice": 6950000,
+        "ratePerSqFt": 8967,
+        "distanceMeters": 80,
+        "similarityScorePct": 98,
+        "weightInEstimate": 0.45,
+        "floor": 5,
+        "coordinates": {
+          "x": 49,
+          "y": 49
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "SRO Registered Document No",
+        "applicantDeclared": "BK-1/4120/2024 (SRO Mulshi)",
+        "sroIndexExtract": "Simulated active record with PMRDA template (synthetic demo)",
+        "matchStatus": "MATCHED"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-p1",
+        "title": "Building Façade & Security Checkpoint",
+        "category": "Exterior",
+        "latLong": "18.5912° N, 73.7389° E",
+        "capturedAt": "29-Oct-2026 11:30 IST",
+        "surveyor": "Sachin Shinde (ID: INSP-PUN-029)",
+        "surveyorId": "INSP-PUN-029",
+        "status": "VERIFIED",
+        "description": "Modern residential tower, active 24/7 security, amenities functional.",
+        "imageUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "29-Oct-2026 14:00 - Field inspection verified. Ready for sign-off."
+    ]
+  },
+  {
+    "id": "case-che-32095",
+    "dataSource": "synthetic-demo",
+    "applicationNo": "HFC-CHE-2026-32095",
+    "borrowerName": "S. Karthik",
+    "coBorrowerName": "Deepa Karthik",
+    "cibilScore": 778,
+    "loanRequested": 6200000,
+    "declaredAgreementValue": 8250000,
+    "propertyType": "High-Rise Apartment",
+    "unitAddress": "Flat C-0402, 4th Floor, Casagrand Zenith",
+    "projectName": "Casagrand Zenith",
+    "locality": "Medavakkam, South Chennai",
+    "city": "Chennai",
+    "pincode": "600100",
+    "branch": "OMR Sholinganallur Tech Branch",
+    "carpetAreaSqFt": 960,
+    "superBuiltUpAreaSqFt": 1280,
+    "floorNo": 4,
+    "totalFloors": 14,
+    "ageYears": 2,
+    "roadWidthFt": 50,
+    "circleRatePerSqFt": 5500,
+    "baseMarketRatePerSqFt": 7200,
+    "floorRiseFactor": 100,
+    "roadWidthFactor": 150,
+    "amenitiesPremium": 300,
+    "structuralDepreciation": 90,
+    "status": "READY_FOR_APPROVAL",
+    "statusLabel": "Validated / Ready",
+    "underwriterHaircutPct": 0,
+    "distressDiscountPct": 18,
+    "ltvRatioPct": 75,
+    "legalRiskPenaltyPct": 0,
+    "assignedUnderwriter": "M. Balachandran (Underwriting Lead)",
+    "createdAt": "25-Oct-2026",
+    "lastUpdated": "01-Nov-2026 13:30 IST",
+    "reraRegistration": "TN/01/Building/0101/2019",
+    "bbmpPlanApprovalNo": "CMDA/PP/MSB/2020/118",
+    "titleChainYears": 30,
+    "encumbranceStatus": "NIL_ENCUMBRANCE",
+    "comparables": [
+      {
+        "id": "comp-c1",
+        "dataSource": "synthetic-demo",
+        "sroRegNo": "SRO-SEL-2026-BK1-03912",
+        "regDate": "12-Oct-2026",
+        "propertyName": "Casagrand Zenith (Block B-0604)",
+        "unitNo": "B-0604",
+        "carpetAreaSqFt": 955,
+        "superBuiltUpAreaSqFt": 1275,
+        "registeredPrice": 7350000,
+        "ratePerSqFt": 7696,
+        "distanceMeters": 90,
+        "similarityScorePct": 96,
+        "weightInEstimate": 0.45,
+        "floor": 6,
+        "coordinates": {
+          "x": 51,
+          "y": 48
+        }
+      }
+    ],
+    "documentFields": [
+      {
+        "label": "SRO Registered Document No",
+        "applicantDeclared": "BK-1/2918/2023 (SRO Selaiyur)",
+        "sroIndexExtract": "Simulated match in TNREGINET template (synthetic demo)",
+        "matchStatus": "MATCHED"
+      }
+    ],
+    "surveyPhotos": [
+      {
+        "id": "photo-c1",
+        "title": "Tower C Entry and Open Clubhouse",
+        "category": "Exterior",
+        "latLong": "12.9212° N, 80.1912° E",
+        "capturedAt": "28-Oct-2026 10:45 IST",
+        "surveyor": "R. Vignesh (ID: INSP-CHE-055)",
+        "surveyorId": "INSP-CHE-055",
+        "status": "VERIFIED",
+        "description": "CMDA sanctioned layout, water management and rainwater harvesting active.",
+        "imageUrl": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+      }
+    ],
+    "auditNotes": [
+      "28-Oct-2026 15:00 - Field inspection completed with 100% compliance."
+    ]
+  }
+]

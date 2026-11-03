@@ -1,0 +1,80 @@
+{
+  "single_user": {
+    "total_requests": 100,
+    "wall_duration_sec": 0.669,
+    "throughput_rps": 149.59,
+    "mean_latency_ms": 6.68,
+    "p50_ms": 4.91,
+    "p95_ms": 8.99,
+    "p99_ms": 17.35,
+    "min_ms": 3.09,
+    "max_ms": 101.7,
+    "error_rate_pct": 0.0
+  },
+  "concurrent_users": {
+    "concurrency_10": {
+      "concurrency_level": 10,
+      "total_requests": 200,
+      "wall_duration_sec": 2.054,
+      "throughput_rps": 97.35,
+      "mean_latency_ms": 98.98,
+      "p50_ms": 100.99,
+      "p95_ms": 132.5,
+      "p99_ms": 144.86,
+      "error_rate_pct": 0.0,
+      "cpu_utilization_pct": 47.9,
+      "memory_rss_mb": 278.88
+    },
+    "concurrency_25": {
+      "concurrency_level": 25,
+      "total_requests": 200,
+      "wall_duration_sec": 2.487,
+      "throughput_rps": 80.43,
+      "mean_latency_ms": 290.42,
+      "p50_ms": 288.64,
+      "p95_ms": 435.62,
+      "p99_ms": 504.71,
+      "error_rate_pct": 0.0,
+      "cpu_utilization_pct": 52.0,
+      "memory_rss_mb": 285.61
+    },
+    "concurrency_50": {
+      "concurrency_level": 50,
+      "total_requests": 200,
+      "wall_duration_sec": 2.375,
+      "throughput_rps": 84.2,
+      "mean_latency_ms": 542.83,
+      "p50_ms": 562.58,
+      "p95_ms": 988.38,
+      "p99_ms": 1145.47,
+      "error_rate_pct": 0.0,
+      "cpu_utilization_pct": 47.5,
+      "memory_rss_mb": 292.71
+    }
+  },
+  "concurrent_valuation": {
+    "total_requests": 100,
+    "concurrency": 50,
+    "wall_duration_sec": 0.216,
+    "throughput_rps": 463.67,
+    "mean_latency_ms": 88.86,
+    "p50_ms": 87.93,
+    "p95_ms": 110.71,
+    "error_rate_pct": 0.0
+  },
+  "database_connection": {
+    "dialect": "sqlite",
+    "connectivity_ok": true,
+    "mean_probe_latency_ms": 0.053,
+    "min_probe_latency_ms": 0.03,
+    "max_probe_latency_ms": 0.38
+  },
+  "fault_recovery": {
+    "induced_404_status": 404,
+    "induced_422_status": 422,
+    "induced_401_status": 401,
+    "post_failure_recovery_status": 200,
+    "post_failure_recovery_latency_ms": 9.03,
+    "recovery_successful": true
+  }
+}

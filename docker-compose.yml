@@ -1,0 +1,110 @@
+# =============================================================================
+# PropVal AI — Hardened Institutional Docker Compose Production Stack
+# Architecture:
+#   1. PostgreSQL 16 + PostGIS Relational Database (Network Isolated)
+#   2. FastAPI Institutional Valuation & Inference Backend (Multi-stage, Non-root)
+#   3. Hardened Nginx Reverse Proxy & React 19 SPA (Unprivileged Non-root)
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. PostgreSQL 16 + PostGIS Relational Database
+  # Network Isolation: Accessible ONLY on backend-network by backend container.
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: propval-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-propval_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-propval_password}
+      POSTGRES_DB: ${POSTGRES_DB:-propval_db}
+    # Database is not exposed to public host interfaces; communicates only via internal network
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-propval_user} -d ${POSTGRES_DB:-propval_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend-network
+
+  # ---------------------------------------------------------------------------
+  # 2. FastAPI Valuation & Underwriting Backend (Python 3.11, CatBoost, SHAP, Conformal)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: propval-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-propval_user}:${POSTGRES_PASSWORD:-propval_password}@db:5432/${POSTGRES_DB:-propval_db}
+      ENVIRONMENT: production
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY:-${JWT_SECRET:-propval-institutional-secret-key-change-in-production-2026}}
+      JWT_SECRET: ${JWT_SECRET:-${SECRET_KEY:-propval-institutional-secret-key-change-in-production-2026}}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      BACKEND_URL: ${BACKEND_URL:-http://localhost:8000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://127.0.0.1,http://localhost:3000}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost,http://127.0.0.1,http://localhost:3000}
+      RATE_LIMIT_ENABLED: "true"
+      RATE_LIMIT_GLOBAL_PER_MINUTE: "120"
+      RATE_LIMIT_AUTH_PER_MINUTE: "20"
+      DB_POOL_SIZE: "10"
+      DB_MAX_OVERFLOW: "20"
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - backend-network
+      - frontend-network
+
+  # ---------------------------------------------------------------------------
+  # 3. Nginx Reverse Proxy & React 19 Frontend Static SPA (Unprivileged Non-Root)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: propval-frontend
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+      - "3000:8080"
+      - "443:8443"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/nginx-health || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    networks:
+      - frontend-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  # Network 1: Connects reverse proxy to FastAPI backend
+  frontend-network:
+    driver: bridge
+  # Network 2: Isolates PostgreSQL database; frontend has zero direct route to db
+  backend-network:
+    driver: bridge

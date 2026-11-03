@@ -46,6 +46,7 @@ export const ValuationCertificateModal: React.FC<ValuationCertificateModalProps>
 
   const handleDownload = () => {
     setDownloadSuccess(true);
+    window.print();
     setTimeout(() => setDownloadSuccess(false), 3000);
   };
 

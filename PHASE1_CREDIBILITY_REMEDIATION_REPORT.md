@@ -216,3 +216,4 @@ From `git diff --stat` against the baseline commit `ea2d6966086421469e17a6dcce99
 2. **Empirical Valuation Benchmarking:** Ingest an anonymized empirical dataset of registered transactions from state IGR / Kaveri portals to measure actual MAPE and R² against ground truth.
 3. **Conformal Uncertainty Calibration:** Implement split-conformal prediction intervals or quantile regression to replace the heuristic penalty deduction with statistically valid prediction bands.
 4. **Statutory SHA-256 Audit Chain:** Implement a lightweight server-side SHA-256 digest linking case input parameters, underwriter haircuts, and approval timestamps into a cryptographically verified hash chain.
+

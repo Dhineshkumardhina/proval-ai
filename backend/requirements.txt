@@ -1,0 +1,29 @@
+# PropVal AI — Core Backend Dependencies (Phase 2B & 2D)
+# Python 3.11 - 3.14 compatible
+
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+sqlalchemy==2.1.3
+alembic==1.20.0
+httpx==0.28.1
+pytest==9.1.1
+pytest-asyncio==1.4.0
+python-dotenv==1.2.4
+pandas==3.0.6
+openpyxl==3.1.5
+
+# Machine Learning & Explainability Dependencies (Phase 2E)
+catboost==1.2.10
+shap==0.54.1
+scikit-learn==1.9.1
+numpy==2.5.3
+
+# Cryptography & Password Hashing (Phase 3B Security)
+bcrypt>=4.0.0
+
+# Production Database Drivers & Geospatial (Optional for local SQLite development)
+# Install when connecting to PostgreSQL + PostGIS:
+# psycopg2-binary>=2.9.9
+# geoalchemy2>=0.14.0

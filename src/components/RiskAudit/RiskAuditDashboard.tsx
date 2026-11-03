@@ -14,9 +14,11 @@ import {
   CheckCircle,
   Percent,
   Sliders,
+  Link2,
 } from 'lucide-react';
 import { ValuationCase } from '../../types/valuation';
 import { formatIndianCurrency } from '../../utils/valuationEngine';
+import { CryptographicAuditTrailView } from './CryptographicAuditTrailView';
 
 interface RiskAuditDashboardProps {
   cases: ValuationCase[];
@@ -28,7 +30,7 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
   onSelectCase,
 }) => {
   const [macroShockPct, setMacroShockPct] = useState<number>(10); // 10% price correction shock
-  const [activeAuditTab, setActiveAuditTab] = useState<'VARIANCE' | 'LEGAL'>('VARIANCE');
+  const [activeAuditTab, setActiveAuditTab] = useState<'VARIANCE' | 'LEGAL' | 'HASH_CHAIN'>('VARIANCE');
 
   // Breaches: circle rate deviation > 15%
   const highVarianceCases = cases.filter((c) => {
@@ -84,10 +86,25 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
           >
             {flaggedTitleCases.length} Legal Flags
           </button>
+          <button
+            onClick={() => setActiveAuditTab('HASH_CHAIN')}
+            className={`px-2.5 py-1 rounded font-semibold transition-colors flex items-center gap-1.5 ${
+              activeAuditTab === 'HASH_CHAIN'
+                ? 'bg-[#38BDF8] text-[#142B4A]'
+                : 'bg-sky-500/20 text-sky-300 border border-sky-500/30 hover:bg-sky-500/30'
+            }`}
+          >
+            <Link2 className="w-3.5 h-3.5" />
+            SHA-256 Audit Trail
+          </button>
         </div>
       </div>
 
-      {/* Stress Testing Scenario Simulator */}
+      {activeAuditTab === 'HASH_CHAIN' ? (
+        <CryptographicAuditTrailView onSelectCase={onSelectCase} />
+      ) : (
+        <>
+          {/* Stress Testing Scenario Simulator */}
       <div className="bg-white p-4 rounded-md border border-[#E2E8F0] shadow-sm space-y-3">
         <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
           <div className="flex items-center gap-2">
@@ -247,6 +264,8 @@ export const RiskAuditDashboard: React.FC<RiskAuditDashboardProps> = ({
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };

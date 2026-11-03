@@ -1,0 +1,8 @@
+{
+  "backup_file": "propval_backup_20261102_161550Z.db",
+  "database_type": "sqlite",
+  "created_at": "2026-11-02T16:15:50.228047+00:00",
+  "source_path": "propval.db",
+  "file_size_bytes": 344064,
+  "sha256_checksum": "dedbf56bb06734320116767aad2c08ed0005a96bba0c42a5b1f82a010b40b286"
+}

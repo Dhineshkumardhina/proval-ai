@@ -15,12 +15,16 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ValuationCase, CREDIBILITY_LABELS } from '../types/valuation';
+import { MLModelStatus, AIStatus } from '../services/apiClient';
 
 interface HeaderProps {
   cases: ValuationCase[];
   currentCaseId: string;
   onSelectCase: (caseId: string) => void;
   onOpenNewCaseModal: () => void;
+  isBackendConnected?: boolean;
+  mlStatus?: MLModelStatus | null;
+  aiStatus?: AIStatus | null;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,6 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   currentCaseId,
   onSelectCase,
   onOpenNewCaseModal,
+  isBackendConnected = false,
+  mlStatus = null,
+  aiStatus = null,
 }) => {
   const currentCase = cases.find((c) => c.id === currentCaseId) || cases[0];
 
@@ -56,6 +63,62 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
           {CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}
         </span>
+
+        <span
+          className={`hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+            isBackendConnected
+              ? 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]'
+              : 'bg-[#F8FAFC] text-[#64748B] border-[#CBD5E1]'
+          }`}
+          title={
+            isBackendConnected
+              ? 'Connected to FastAPI backend with PostgreSQL/SQLite persistence'
+              : 'Operating in local offline fallback mode'
+          }
+        >
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              isBackendConnected ? 'bg-[#2563EB] animate-pulse' : 'bg-[#94A3B8]'
+            }`}
+          />
+          {isBackendConnected ? 'Backend Connected' : 'Offline Mode'}
+        </span>
+
+        {mlStatus && (
+          <span
+            className={`hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+              mlStatus.isMlActive
+                ? 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]'
+                : 'bg-[#F1F5F9] text-[#475569] border-[#CBD5E1]'
+            }`}
+            title={mlStatus.datasetReadinessSummary}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                mlStatus.isMlActive ? 'bg-[#10B981]' : 'bg-[#64748B]'
+              }`}
+            />
+            {mlStatus.isMlActive
+              ? `ML Engine: ${mlStatus.activeModelVersion || 'v1.0'} Active`
+              : `ML Engine: Gated (${mlStatus.totalVerifiedRecordsAvailable}/${mlStatus.requiredRecordsThreshold} verified records)`}
+          </span>
+        )}
+
+        {aiStatus && (
+          <span
+            className={`hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+              aiStatus.provider === 'gemini'
+                ? 'bg-[#F5F3FF] text-[#6D28D9] border-[#DDD6FE]'
+                : 'bg-[#F8FAFC] text-[#475569] border-[#CBD5E1]'
+            }`}
+            title={aiStatus.disclaimer}
+          >
+            <Sparkles className="w-3 h-3 text-[#7C3AED]" />
+            {aiStatus.provider === 'gemini'
+              ? `AI Assistant: ${aiStatus.model}`
+              : 'AI Assistant: Grounded Fallback'}
+          </span>
+        )}
       </div>
 
       {/* Right: Actions & User Underwriter Profile */}

@@ -1,0 +1,74 @@
+{
+  "single_user_journey": {
+    "iterations": 10,
+    "steps_per_journey": 5,
+    "mean_journey_duration_ms": 32.53,
+    "median_p50_ms": 21.72,
+    "p95_ms": 79.01,
+    "status_codes": [
+      200,
+      200,
+      200,
+      200,
+      200
+    ]
+  },
+  "concurrent_valuation_requests": {
+    "parallel_requests": 50,
+    "wall_duration_sec": 0.137,
+    "throughput_rps": 363.71,
+    "mean_latency_ms": 116.69,
+    "median_p50_ms": 116.75,
+    "p95_ms": 131.78,
+    "error_rate_pct": 0.0
+  },
+  "ingestion_under_load": {
+    "upload_status_code": 201,
+    "upload_duration_sec": 0.227,
+    "rows_ingested": 1200,
+    "effective_throughput_rows_per_sec": 5296.7,
+    "concurrent_read_queries": 20,
+    "concurrent_read_mean_ms": 7.39,
+    "concurrent_read_p95_ms": 9.1
+  },
+  "database_connection_probe": {
+    "probe_iterations": 20,
+    "all_probes_successful": true,
+    "mean_probe_latency_ms": 0.065,
+    "p95_probe_latency_ms": 0.118,
+    "min_probe_latency_ms": 0.05,
+    "max_probe_latency_ms": 0.26,
+    "dialect": "sqlite"
+  },
+  "recovery_resilience": {
+    "injected_fault_count": 10,
+    "fault_status_codes": [
+      422,
+      422,
+      422,
+      422,
+      422,
+      422,
+      422,
+      422,
+      422,
+      422
+    ],
+    "faults_handled_gracefully": true,
+    "subsequent_valid_count": 10,
+    "subsequent_status_codes": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "recovery_success_rate_pct": 100.0,
+    "mean_recovery_latency_ms": 6.75
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-11-02T17:23:55.387142+00:00",
+  "database": {
+    "cases_returned": 20,
+    "total_cases_in_db": 20,
+    "list_cases_latency_ms": 12.71,
+    "queries_emitted_for_list_20": 3,
+    "queries_emitted_for_get_1": 2,
+    "connection_probe_latency_ms": 0.59,
+    "db_dialect": "sqlite",
+    "explain_query_plan": [
+      [
+        7,
+        0,
+        222,
+        "SCAN valuation_cases USING INDEX ix_valuation_cases_created_at"
+      ],
+      [
+        10,
+        0,
+        46,
+        "SEARCH properties USING INDEX sqlite_autoindex_properties_1 (id=?)"
+      ]
+    ]
+  },
+  "ml": {
+    "training_time_ms": 8060.61,
+    "model_loading_time_ms": 1.9,
+    "single_inference_only_latency_ms": 1.686,
+    "single_inference_with_shap_latency_ms": 9.27,
+    "single_tree_shap_latency_ms": 7.584,
+    "batch_inference": {
+      "batch_10": {
+        "total_latency_ms": 1.88,
+        "per_record_latency_ms": 0.188
+      },
+      "batch_50": {
+        "total_latency_ms": 1.65,
+        "per_record_latency_ms": 0.033
+      },
+      "batch_100": {
+        "total_latency_ms": 1.86,
+        "per_record_latency_ms": 0.019
+      },
+      "batch_500": {
+        "total_latency_ms": 3.53,
+        "per_record_latency_ms": 0.007
+      }
+    },
+    "memory_rss_delta_mb": 21.05,
+    "traced_peak_memory_mb": 1.75
+  },
+  "valuation_computation": {
+    "iterations": 5000,
+    "total_duration_ms": 76.62,
+    "latency_per_calc_microsec": 15.32,
+    "calculations_per_second": 65256.8
+  },
+  "ingestion": {
+    "dataset_rows": 1200,
+    "ingestion_duration_sec": 0.198,
+    "ingestion_throughput_rows_per_sec": 6069.2
+  }
+}
