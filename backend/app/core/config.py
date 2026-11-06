@@ -113,6 +113,12 @@ class Settings(BaseSettings):
     DB_POOL_PRE_PING: bool = True
     DB_POOL_RECYCLE_SECONDS: int = 300
 
+    # OpenTelemetry Distributed Tracing & Observability (Phase 6E)
+    OTEL_ENABLED: bool = False
+    OTEL_SERVICE_NAME: str = "propval-ai-backend"
+    OTEL_EXPORTER_OTLP_ENDPOINT: str = "http://localhost:4318"
+    OTEL_TRACES_SAMPLER_RATIO: float = 1.0
+
     @model_validator(mode="after")
     def synchronize_aliases(self) -> "Settings":
         # Synchronize JWT_SECRET and SECRET_KEY

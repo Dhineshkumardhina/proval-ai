@@ -5,6 +5,7 @@ data minimization and purpose limitation principles.
 """
 
 import re
+from datetime import datetime, timezone
 from typing import Dict, List, Tuple, Any
 
 
@@ -18,11 +19,30 @@ INDIAN_PHONE_REGEX = re.compile(r"(?:\+91[\-\s]?)?[6-9]\d{9}\b")
 EMAIL_REGEX = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
 # Labeled person name patterns (e.g., "Borrower: Ramesh Kumar", "Applicant: Ananya Roy")
 NAME_LABELED_REGEX = re.compile(
-    r"(?i)\b(borrower|applicant|co-applicant|owner|guarantor|customer)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})",
+    r"(?i)\b(borrower|applicant|co-applicant|owner|guarantor|customer|buyer|seller|purchaser|vendor|claimant)\s*:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})",
 )
 # Honorific person name patterns (e.g., "Mr. Rajesh Sharma", "Shri Amit Verma")
 HONORIFIC_NAME_REGEX = re.compile(
     r"\b(?:Mr\.|Mrs\.|Ms\.|Shri\b|Smt\.|Dr\.)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3})\b"
+)
+
+# Explicit Property Identifier Keys that must be safeguarded from accidental entity destruction
+SAFE_PROPERTY_KEYS = {
+    "unit_number", "flat_no", "flat_number", "door_no", "door_number",
+    "survey_number", "sy_no", "cts_number", "cts_no", "katha_number",
+    "plot_no", "plot_number", "pincode", "postal_code", "pin_code",
+    "carpet_area_sqft", "carpet_area", "built_up_area", "super_built_up_area",
+    "area", "transaction_amount", "price", "registered_price", "guideline_rate_per_sqft",
+    "latitude", "longitude", "lat", "lon", "floor", "floor_number", "total_floors",
+    "registration_number", "doc_no", "sro_office", "sro", "state", "district", "city",
+    "sub_district", "locality", "project_name", "building", "society", "property_type"
+}
+
+# Personal Party or Identifier Key Substrings that must be aggressively scrubbed
+SENSITIVE_KEY_SUBSTRINGS = (
+    "party", "buyer", "seller", "purchaser", "vendor", "owner_name",
+    "borrower", "applicant", "guarantor", "aadhaar", "pan", "phone",
+    "mobile", "contact", "email", "witness"
 )
 
 # Known Prompt Injection and Jailbreak patterns
@@ -99,6 +119,127 @@ def redact_pii(text: str) -> Tuple[str, int, List[str]]:
         redacted = HONORIFIC_NAME_REGEX.sub("[REDACTED_NAME]", redacted)
 
     return redacted, redactions_count, detected_types
+
+
+def scrub_raw_payload_dict(payload: Dict[str, Any]) -> Tuple[Dict[str, Any], int, List[str]]:
+    """Deep recursive scrubber for connector and ingestion payloads.
+
+    Detects and scrubs:
+      - Aadhaar numbers (12-digit standard)
+      - PAN cards (Indian income tax format)
+      - Mobile phone numbers (Indian 10-digit mobile)
+      - Email addresses
+      - Personal Party / Buyer / Seller / Vendor names
+      - Free-text PII in comments or notes
+
+    Safeguards legitimate property identifiers:
+      - Unit / Flat numbers (e.g., 'Flat 402', 'Unit 12B')
+      - Survey numbers (e.g., 'Sy No 145/2A')
+      - CTS numbers (e.g., 'CTS 908/1')
+      - Postal PIN codes (e.g., 560001)
+      - Coordinates, amounts, and areas
+
+    Returns:
+        Tuple of (cleansed_payload_dict, total_redactions_count, list_of_detected_pii_types)
+    """
+    if not isinstance(payload, dict):
+        return payload, 0, []
+
+    total_redactions = 0
+    all_detected_types: List[str] = []
+
+    def _scrub_value(key_context: str, val: Any) -> Any:
+        nonlocal total_redactions
+
+        # If it's a nested dictionary
+        if isinstance(val, dict):
+            sub_dict, count, types = scrub_raw_payload_dict(val)
+            total_redactions += count
+            all_detected_types.extend(types)
+            return sub_dict
+
+        # If it's a list
+        if isinstance(val, list):
+            new_list = []
+            for item in val:
+                new_list.append(_scrub_value(key_context, item))
+            return new_list
+
+        # If not a string, check if the key itself designates sensitive personal data
+        normalized_key = key_context.strip().lower()
+
+        # Check if the key is explicitly a property identifier that should be preserved as-is
+        if normalized_key in SAFE_PROPERTY_KEYS:
+            return val
+
+        # If key explicitly matches a sensitive personal data key
+        if any(sensitive_sub in normalized_key for sensitive_sub in SENSITIVE_KEY_SUBSTRINGS):
+            if val is not None and str(val).strip():
+                total_redactions += 1
+                if "pan" in normalized_key:
+                    all_detected_types.append("PAN")
+                    return "[REDACTED_PAN]"
+                elif "aadhaar" in normalized_key:
+                    all_detected_types.append("AADHAAR")
+                    return "[REDACTED_AADHAAR]"
+                elif any(p in normalized_key for p in ("phone", "mobile", "contact")):
+                    all_detected_types.append("PHONE")
+                    return "[REDACTED_PHONE]"
+                elif "email" in normalized_key:
+                    all_detected_types.append("EMAIL")
+                    return "[REDACTED_EMAIL]"
+                else:
+                    all_detected_types.append("PARTY_NAME")
+                    return "[REDACTED_PERSONAL_NAME]"
+
+        # If it's a string, scan for regex matches
+        if isinstance(val, str):
+            # If string is purely empty or whitespace
+            if not val.strip():
+                return val
+
+            # Check if this string belongs to a safe property key, but still check for embedded PAN/Aadhaar/Email/Phone
+            # but NEVER treat the entire value as a personal name if it's a safe property key
+            redacted_str, count, types = redact_pii(val)
+            if count > 0:
+                total_redactions += count
+                all_detected_types.extend(types)
+                return redacted_str
+
+            return val
+
+        return val
+
+    cleansed_payload = {}
+    for k, v in payload.items():
+        cleansed_payload[k] = _scrub_value(k, v)
+
+    # Unique detected types preserving order
+    unique_types = []
+    for t in all_detected_types:
+        if t not in unique_types:
+            unique_types.append(t)
+
+    return cleansed_payload, total_redactions, unique_types
+
+
+def anonymize_staged_payload_for_retention(raw_payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Prunes raw transaction staging payloads past data retention limits (DPDP Section 8).
+
+    Retains strictly non-identifiable structural metadata and hashes for cryptographic proof.
+    """
+    if not isinstance(raw_payload, dict):
+        return {"_retention_purged": True}
+
+    return {
+        "_retention_purged": True,
+        "_purged_at": datetime.now(timezone.utc).isoformat(),
+        "property_type": raw_payload.get("property_type") or raw_payload.get("category"),
+        "carpet_area_sqft": raw_payload.get("carpet_area_sqft") or raw_payload.get("area"),
+        "transaction_amount": raw_payload.get("transaction_amount") or raw_payload.get("price"),
+        "locality": raw_payload.get("locality"),
+        "pincode": raw_payload.get("pincode") or raw_payload.get("postal_code"),
+    }
 
 
 def sanitize_prompt_input(text: str) -> Tuple[str, bool]:

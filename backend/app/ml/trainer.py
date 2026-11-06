@@ -28,6 +28,9 @@ def train_valuation_model(
     dataset_id: str,
     algorithm: str = "CatBoostRegressor",
     user_name: str = "Automated Pipeline",
+    version_id: Optional[str] = None,
+    approved_by: Optional[str] = None,
+    user_role: Optional[str] = None,
 ) -> MLModelRegistryModel:
     """Execute training pipeline strictly gated by Phase 2D readiness evaluation.
 
@@ -36,7 +39,42 @@ def train_valuation_model(
     - Refuses to train models or fabricate metrics
     - Persists audit trail of why training was blocked
     """
-    # 1. Evaluate Strict Pre-Training Gate
+    from app.models.dataset_version import DatasetVersionModel
+    from app.services.audit_service import record_audit_event
+
+    # 1. Dataset Version & Training Authorization Verification (Phase 4B-7)
+    ver_obj = None
+    if version_id:
+        ver_obj = db.query(DatasetVersionModel).filter(DatasetVersionModel.id == version_id).first()
+        if not ver_obj or ver_obj.dataset_id != dataset_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Dataset version '{version_id}' does not exist for dataset '{dataset_id}'.",
+            )
+        if ver_obj.approval_status != "APPROVED":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Training Authorization Blocked: Dataset version '{ver_obj.semver_tag}' has approval status '{ver_obj.approval_status}'. Must be 'APPROVED'.",
+            )
+    else:
+        ver_obj = (
+            db.query(DatasetVersionModel)
+            .filter(DatasetVersionModel.dataset_id == dataset_id, DatasetVersionModel.approval_status == "APPROVED")
+            .order_by(DatasetVersionModel.created_at.desc())
+            .first()
+        )
+
+    # 2. Separation of Duties Check
+    if approved_by and user_name:
+        clean_user = user_name.split("(")[0].strip().lower()
+        clean_approver = approved_by.split("(")[0].strip().lower()
+        if clean_user == clean_approver:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Separation of duties violation: Training requester cannot be the sole approving authority.",
+            )
+
+    # 3. Evaluate Strict Pre-Training Gate
     gate_audit = evaluate_training_gate(db, dataset_id)
 
     if not gate_audit.canTrain:
@@ -63,7 +101,7 @@ def train_valuation_model(
         db.commit()
 
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=422,
             detail={
                 "error": "TRAINING_BLOCKED_BY_READINESS_GATE",
                 "message": "Dataset does not meet the mandatory criteria for training a production-quality ML valuation model.",

@@ -21,6 +21,7 @@ ROLE_SENIOR_UNDERWRITER = "SENIOR_UNDERWRITER"
 ROLE_RISK_COMMITTEE_MEMBER = "RISK_COMMITTEE_MEMBER"
 ROLE_COMPLIANCE_AUDITOR = "COMPLIANCE_AUDITOR"
 ROLE_ADMIN = "ADMIN"
+ROLE_INSTITUTION_ADMIN = "INSTITUTION_ADMIN"
 
 
 def hash_password(password: str) -> str:
@@ -106,6 +107,7 @@ class UserSession(BaseModel):
     username: str
     name: str
     role: str
+    institution_id: Optional[str] = None
     is_authenticated: bool = True
 
 
@@ -232,6 +234,7 @@ def get_current_user(
             username=jwt_payload.get("sub") or jwt_payload.get("username", "underwriter"),
             name=jwt_payload.get("name", "Institutional User"),
             role=jwt_payload.get("role", ROLE_CREDIT_UNDERWRITER),
+            institution_id=jwt_payload.get("institution_id"),
             is_authenticated=True,
         )
 
@@ -270,3 +273,21 @@ def require_roles(allowed_roles: List[str]):
         return user
 
     return role_checker
+
+
+def enforce_tenant_isolation(user: UserSession, target_institution_id: Optional[str]) -> None:
+    """Validate that user has authorization to access target institution data.
+
+    Global ADMIN without institution_id restriction can access any tenant.
+    Institution-scoped users can ONLY access their own tenant data.
+    """
+    if not target_institution_id:
+        return
+    if user.role == ROLE_ADMIN and not user.institution_id:
+        return
+    if user.institution_id and user.institution_id != target_institution_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Cross-institution access denied. User belongs to tenant '{user.institution_id}' and cannot access '{target_institution_id}'.",
+        )
+

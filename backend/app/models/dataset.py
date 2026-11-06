@@ -60,6 +60,14 @@ class DatasetMetadataModel(Base):
     status = Column(String(32), default="COMPLETED")  # PENDING, INGESTING, COMPLETED, FAILED
     is_usable_for_ml = Column(Boolean, default=False)
 
+    # Institutional Governance & Approval Workflows (Phase 4B-1)
+    approval_status = Column(String(32), default="DRAFT", nullable=False, index=True)
+    # Options: DRAFT, UNDER_REVIEW, APPROVED, REJECTED, DEPRECATED
+    data_owner = Column(String(128), default="Institutional Data Officer", nullable=False)
+    responsible_reviewer = Column(String(128), nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    review_notes = Column(Text, nullable=True)
+
     created_at = Column(DateTime(timezone=True), default=get_utc_now, nullable=False)
     updated_at = Column(DateTime(timezone=True), default=get_utc_now, onupdate=get_utc_now, nullable=False)
 
@@ -77,6 +85,7 @@ class ImportedTransactionModel(Base):
     __table_args__ = (
         Index("ix_imported_tx_verified_asking", "is_verified_deed", "is_asking_price"),
         Index("ix_imported_tx_city_locality", "city", "locality"),
+        Index("ix_imported_tx_lat_lon", "latitude", "longitude"),
     )
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -99,6 +108,7 @@ class ImportedTransactionModel(Base):
     transaction_quarter = Column(String(16), nullable=False, index=True)  # e.g. 2024-Q3
 
     carpet_area_sqft = Column(Float, nullable=False)
+    built_up_area_sqft = Column(Float, nullable=True)
     super_built_up_area_sqft = Column(Float, nullable=True)
     floor_no = Column(Integer, nullable=True)
     total_floors = Column(Integer, nullable=True)
@@ -110,9 +120,20 @@ class ImportedTransactionModel(Base):
     guideline_rate_per_sqft = Column(Float, nullable=True)
     deviation_from_guideline_pct = Column(Float, nullable=True)
 
-    # Coordinates
+    # Coordinates & Spatial Metrics
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    original_latitude = Column(Float, nullable=True)
+    original_longitude = Column(Float, nullable=True)
+    precision_digits = Column(Integer, nullable=True)
+
+    # Cadastral & Parcel Identifiers (Phase 4B-7)
+    survey_number = Column(String(64), nullable=True, index=True)
+    village_name = Column(String(128), nullable=True, index=True)
+    taluka_tehsil = Column(String(128), nullable=True)
+    sro_jurisdiction_code = Column(String(64), nullable=True, index=True)
+    cadastral_parcel_id = Column(String(128), nullable=True, index=True)
+    spatial_accuracy_tier = Column(String(32), default="COORDINATE_BOUNDED")
 
     # Data Quality Flags
     is_verified_deed = Column(Boolean, default=True)
@@ -191,4 +212,23 @@ class DataQualityReportModel(Base):
     created_at = Column(DateTime(timezone=True), default=get_utc_now, nullable=False)
 
     dataset = relationship("DatasetMetadataModel", back_populates="quality_reports")
+
+
+class ErasureRequestModel(Base):
+    """Formal DPDP Section 12 Right to Erasure request log and audit proof."""
+
+    __tablename__ = "erasure_requests"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    transaction_id = Column(String(64), nullable=False, index=True)
+    dataset_id = Column(String(64), nullable=True, index=True)
+    requester_id = Column(String(64), nullable=False)
+    requester_role = Column(String(64), nullable=False)
+    reason = Column(Text, nullable=False)
+    status = Column(String(32), default="PENDING", nullable=False)  # PENDING, COMPLETED, FAILED, REJECTED_LEGAL_HOLD
+    records_erased_summary = Column(JSON, nullable=True)
+    legal_backup_disclaimer = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=get_utc_now, nullable=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
 

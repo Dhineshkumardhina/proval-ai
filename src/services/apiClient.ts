@@ -81,16 +81,13 @@ export function setAuthToken(token: string | null): void {
 }
 
 export async function loginUser(username = 'v.sundaram', password = 'SrUnderwriter@2026!'): Promise<string> {
-  const body = new URLSearchParams();
-  body.append('username', username);
-  body.append('password', password);
   const response = await fetch(`${API_BASE_URL}/api/v1/auth/token`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    body: body.toString(),
+    body: JSON.stringify({ username, password }),
   });
   if (!response.ok) {
     throw new Error(`Authentication failed (${response.status})`);
@@ -789,6 +786,208 @@ export async function fetchAuditSummary(signal?: AbortSignal): Promise<AuditSumm
     return null;
   }
 }
+
+// =========================================================================
+// Institutional Data Quality & Governance Surveillance (Phase 4B-5)
+// =========================================================================
+
+export interface SourceDistributionItem {
+  source_id: string;
+  source_name: string;
+  provider_name: string;
+  authorization_status: string;
+  total_records: number;
+  verified_empirical_count: number;
+  is_active: boolean;
+}
+
+export interface GeographicDistributionItem {
+  state: string;
+  city_count: number;
+  record_count: number;
+  percentage: number;
+}
+
+export interface CityDistributionItem {
+  city: string;
+  record_count: number;
+  percentage: number;
+  locality_count: number;
+}
+
+export interface MissingDataStatisticItem {
+  field_name: string;
+  missing_count: number;
+  missing_percentage: number;
+  impact_level: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+}
+
+export interface IngestionJobStatusItem {
+  job_id: string;
+  source_id: string;
+  status: string;
+  trigger_mode: string;
+  records_fetched: number;
+  records_normalized: number;
+  records_rejected: number;
+  records_duplicate: number;
+  started_at: string;
+  completed_at?: string | null;
+}
+
+export interface QuarantinedRecordReviewItem {
+  id: string;
+  dataset_id: string;
+  row_index: number;
+  quarantine_code: string;
+  quarantine_reason: string;
+  anomaly_score: number;
+  anomalous_fields: string[];
+  resolution_status: string;
+  created_at: string;
+}
+
+export interface DataQualityMethodology {
+  overall_score: number;
+  completeness_score: number;
+  validity_score: number;
+  uniqueness_score: number;
+  consistency_score: number;
+  formula_description: string;
+  weights: Record<string, number>;
+}
+
+export interface MLReadinessGateSummary {
+  is_gated: boolean;
+  empirical_records_count: number;
+  empirical_records_threshold: number;
+  calibration_holdout_count: number;
+  calibration_holdout_threshold: number;
+  status_label: string;
+  gate_reason: string;
+}
+
+export interface InstitutionalGovernanceDashboard {
+  total_ingested_transactions: number;
+  successfully_normalized_records: number;
+  validated_records: number;
+  verified_empirical_deeds: number;
+  synthetic_and_mock_records: number;
+  duplicate_records: number;
+  rejected_records: number;
+  quarantined_records: number;
+  records_awaiting_verification: number;
+  verification_rate_pct?: number;
+  total_localities_covered?: number;
+  data_quality_score: number;
+  quality_methodology: DataQualityMethodology;
+  source_wise_distribution: SourceDistributionItem[];
+  geographic_distribution: GeographicDistributionItem[];
+  city_wise_distribution?: CityDistributionItem[];
+  missing_data_statistics: MissingDataStatisticItem[];
+  latest_ingestion_jobs: IngestionJobStatusItem[];
+  data_freshness_timestamp?: string | null;
+  latest_acquisition_date?: string | null;
+  ml_readiness_gate: MLReadinessGateSummary;
+  active_dataset_count: number;
+  approved_dataset_count: number;
+  dataset_version_history_count: number;
+  user_role: string;
+  can_approve_datasets: boolean;
+  can_export_ml: boolean;
+}
+
+/**
+ * Fetch aggregated institutional data quality & governance dashboard metrics.
+ */
+export async function fetchGovernanceMetrics(signal?: AbortSignal): Promise<InstitutionalGovernanceDashboard | null> {
+  try {
+    const response = await authenticatedFetch(`${API_BASE_URL}/api/v1/governance/metrics`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal,
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch isolated anomalous records held in quarantine for underwriter review.
+ */
+export async function fetchQuarantinedRecords(
+  params?: { limit?: number; offset?: number },
+  signal?: AbortSignal
+): Promise<QuarantinedRecordReviewItem[] | null> {
+  try {
+    const query = new URLSearchParams();
+    if (params?.limit) query.append('limit', String(params.limit));
+    if (params?.offset) query.append('offset', String(params.offset));
+
+    const response = await authenticatedFetch(`${API_BASE_URL}/api/v1/governance/quarantine?${query.toString()}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal,
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Phase 7B: Institutional Pilot Dashboard metrics.
+ */
+export interface InstitutionalPilotDashboard {
+  totalRegisteredInstitutions: number;
+  institutionsApprovedForPilot: number;
+  pendingOnboardingApprovals: number;
+  activePilotUsers: number;
+  totalValuationCasesProcessed: number;
+  pendingHumanReviews: number;
+  highAlertCases: number;
+  valuationDivergenceStats: {
+    meanDivergencePct: number;
+    casesExceeding15Pct: number;
+    maxDivergencePct: number;
+  };
+  auditChainVerificationStatus: {
+    isValid: boolean;
+    totalEvents: number;
+    latestHash: string;
+  };
+  dataProvenanceStatus: {
+    certifiedDeeds: number;
+    verifiedDeeds: number;
+    mlGateStatus: string;
+    activeValuationEngine: string;
+  };
+}
+
+export async function fetchPilotDashboard(signal?: AbortSignal): Promise<InstitutionalPilotDashboard | null> {
+  try {
+    const response = await authenticatedFetch(`${API_BASE_URL}/api/v1/institutions/pilot-dashboard`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal,
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
+
 
 
 

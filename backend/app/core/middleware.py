@@ -15,6 +15,7 @@ from app.core.logging import (
     client_ip_ctx,
     log_security_event,
 )
+from app.core.telemetry import observability_registry
 
 req_logger = logging.getLogger("propval.access")
 
@@ -55,6 +56,9 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         finally:
             duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
             path = request.url.path
+
+            # Record operational metrics (Phase 6E Observability)
+            observability_registry.record_api_request(status_code=status_code, duration_ms=duration_ms)
 
             # Log request outcome (health checks logged at DEBUG to reduce clutter)
             log_level = logging.DEBUG if path in ("/health", "/health/live", "/health/ready", "/api/v1/health") else logging.INFO

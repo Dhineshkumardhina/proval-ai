@@ -24,6 +24,7 @@ from app.models.dataset import (
 )
 from app.schemas.dataset import (
     DatasetResponse,
+    DatasetApprovalRequest,
     ImportedTransactionResponse,
     RejectedRecordResponse,
     DuplicateRecordResponse,
@@ -182,7 +183,7 @@ async def upload_dataset(
 )
 def list_datasets(
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """List datasets."""
     datasets = db.query(DatasetMetadataModel).order_by(desc(DatasetMetadataModel.created_at)).all()
@@ -205,10 +206,29 @@ def list_datasets(
                 duplicateRows=d.duplicate_rows,
                 status=d.status,
                 isUsableForMl=d.is_usable_for_ml,
+                approvalStatus=d.approval_status or "DRAFT",
+                dataOwner=d.data_owner or "Institutional Data Officer",
+                responsibleReviewer=d.responsible_reviewer,
+                reviewedAt=d.reviewed_at,
+                reviewNotes=d.review_notes,
                 createdAt=d.created_at,
             )
         )
     return results
+
+
+@router.get(
+    "/empirical-coverage",
+    summary="Get Empirical Transaction Coverage & ML Eligibility Metrics",
+    description="Track progress toward the 1,000 verified empirical deed threshold across city, locality, property type, and size brackets.",
+)
+def get_empirical_coverage(
+    db: Session = Depends(get_db),
+    user: UserSession = Depends(get_current_user),
+):
+    """Retrieve multi-dimensional empirical deed coverage and ML eligibility status."""
+    from app.dataset_management.empirical_coverage import EmpiricalCoverageService
+    return EmpiricalCoverageService.get_empirical_coverage(db)
 
 
 @router.get(
@@ -219,7 +239,7 @@ def list_datasets(
 def get_dataset(
     dataset_id: str,
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """Get single dataset metadata."""
     d = db.query(DatasetMetadataModel).filter(DatasetMetadataModel.id == dataset_id).first()
@@ -241,6 +261,78 @@ def get_dataset(
         duplicateRows=d.duplicate_rows,
         status=d.status,
         isUsableForMl=d.is_usable_for_ml,
+        approvalStatus=d.approval_status or "DRAFT",
+        dataOwner=d.data_owner or "Institutional Data Officer",
+        responsibleReviewer=d.responsible_reviewer,
+        reviewedAt=d.reviewed_at,
+        reviewNotes=d.review_notes,
+        createdAt=d.created_at,
+    )
+
+
+@router.put(
+    "/{dataset_id}/approve",
+    response_model=DatasetResponse,
+    summary="Approve or Reject Dataset Governance Workflow (Senior Underwriter / Admin)",
+)
+def approve_dataset(
+    dataset_id: str,
+    req: DatasetApprovalRequest,
+    db: Session = Depends(get_db),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
+):
+    """Approve or reject dataset for institutional use."""
+    d = db.query(DatasetMetadataModel).filter(DatasetMetadataModel.id == dataset_id).first()
+    if not d:
+        raise HTTPException(status_code=404, detail=f"Dataset '{dataset_id}' not found.")
+
+    from datetime import datetime, timezone
+    prev_status = d.approval_status
+    d.approval_status = req.approval_status
+    d.responsible_reviewer = user.username
+    d.reviewed_at = datetime.now(timezone.utc)
+    d.review_notes = req.review_notes
+
+    from app.services.audit_service import record_audit_event, EVENT_DATASET_APPROVAL_STATUS_CHANGED
+    record_audit_event(
+        db=db,
+        event_type=EVENT_DATASET_APPROVAL_STATUS_CHANGED,
+        actor_id=user.username,
+        actor_role=user.role,
+        payload={
+            "dataset_id": d.id,
+            "dataset_name": d.name,
+            "previous_status": prev_status,
+            "new_status": req.approval_status,
+            "responsible_reviewer": user.username,
+            "review_notes": req.review_notes,
+        },
+    )
+
+    db.commit()
+    db.refresh(d)
+
+    return DatasetResponse(
+        id=d.id,
+        name=d.name,
+        description=d.description,
+        sourceType=d.source_type,
+        licenseType=d.license_type,
+        dataSourceProvenance=d.data_source_provenance,
+        fileFormat=d.file_format,
+        originalFilename=d.original_filename,
+        fileHashSha256=d.file_hash_sha256,
+        totalRows=d.total_rows,
+        validRows=d.valid_rows,
+        rejectedRows=d.rejected_rows,
+        duplicateRows=d.duplicate_rows,
+        status=d.status,
+        isUsableForMl=d.is_usable_for_ml,
+        approvalStatus=d.approval_status,
+        dataOwner=d.data_owner,
+        responsibleReviewer=d.responsible_reviewer,
+        reviewedAt=d.reviewed_at,
+        reviewNotes=d.review_notes,
         createdAt=d.created_at,
     )
 
@@ -255,7 +347,7 @@ def get_dataset_records(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """Retrieve normalized valid records from dataset."""
     records = (
@@ -307,7 +399,7 @@ def get_rejected_records(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """Retrieve rejected records with diagnostic failure codes."""
     records = (
@@ -341,7 +433,7 @@ def get_duplicate_records(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """Retrieve duplicate records flagged by fingerprint hashing."""
     records = (
@@ -373,7 +465,7 @@ def get_duplicate_records(
 def get_dataset_readiness(
     dataset_id: str,
     db: Session = Depends(get_db),
-    user: UserSession = Depends(get_current_user),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
 ):
     """Retrieve data quality and readiness report."""
     report = (
@@ -428,4 +520,34 @@ def prepare_ml_dataset(
         val_ratio=valRatio,
         test_ratio=testRatio,
     )
+
+
+@router.post(
+    "/transactions/{transaction_id}/erase",
+    summary="Execute DPDP Section 12 Right to Erasure on Transaction Record",
+    description="Atomically purges transaction and all derived references across active, evidence, duplicate, quarantine, and staging stores.",
+)
+def erase_transaction(
+    transaction_id: str,
+    reason: str = Query(..., description="Legal reason / DPDP Section 12 request ticket reference"),
+    db: Session = Depends(get_db),
+    user: UserSession = Depends(require_roles([ROLE_ADMIN, ROLE_SENIOR_UNDERWRITER])),
+):
+    """Execute multi-tier atomic transaction erasure under DPDP Section 12."""
+    from app.services.erasure_service import TransactionErasureService
+    result = TransactionErasureService.execute_erasure(
+        db=db,
+        transaction_id=transaction_id,
+        reason=reason,
+        actor_id=user.username,
+    )
+    if not result.get("success"):
+        if result.get("error") == "NOT_FOUND":
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=result.get("message"))
+        elif result.get("error") == "LEGAL_HOLD_ACTIVE":
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=result.get("message"))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=result.get("message"))
+    return result
+
+
 

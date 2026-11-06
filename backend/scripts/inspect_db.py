@@ -1,14 +1,29 @@
 import sqlite3
-import os
 
-for path in ['propval.db', 'backend/propval.db']:
-    if os.path.exists(path):
-        print(f"=== {path} (size: {os.path.getsize(path)} bytes) ===")
-        conn = sqlite3.connect(path)
+for db_path in ['backend/propval.db', 'propval.db']:
+    print(f"=== DATABASE: {db_path} ===")
+    try:
+        conn = sqlite3.connect(db_path)
         cur = conn.cursor()
-        tables = cur.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;").fetchall()
-        for t in tables:
-            name = t[0]
-            cnt = cur.execute(f"SELECT COUNT(*) FROM {name};").fetchone()[0]
-            print(f"  {name}: {cnt} rows")
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = [r[0] for r in cur.fetchall()]
+        print("Tables:", tables)
+        for t in [
+            'data_sources',
+            'ingestion_jobs',
+            'raw_transaction_staging',
+            'datasets',
+            'imported_transactions',
+            'duplicate_records',
+            'rejected_records',
+            'quarantined_records',
+            'verification_evidence',
+            'dataset_versions'
+        ]:
+            if t in tables:
+                cur.execute(f"SELECT count(*) FROM {t}")
+                cnt = cur.fetchone()[0]
+                print(f"  {t}: {cnt}")
         conn.close()
+    except Exception as e:
+        print(f"Error reading {db_path}: {e}")

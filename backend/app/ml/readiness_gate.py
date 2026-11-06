@@ -51,7 +51,26 @@ def evaluate_training_gate(db: Session, dataset_id: str) -> MLTrainingGateAuditR
 
     blocking_issues: List[str] = []
 
-    # 1. Check for Synthetic Demonstration Provenance
+    # 1. Dataset Approval & Governance Gate (Phase 4B-7B)
+    if dataset.approval_status != "APPROVED":
+        blocking_issues.append(
+            f"UNAPPROVED_DATASET: Dataset approval status is '{dataset.approval_status}'. "
+            "Institutional risk policy strictly mandates 'APPROVED' status before training ML models."
+        )
+
+    # 2. Source Purpose & Contractual Licensing Gate (Phase 4B-7B)
+    from app.services.policy_service import DataPolicyService
+    is_ml_authorized, purpose_reason = DataPolicyService.verify_dataset_and_source_for_ml(
+        db=db,
+        dataset=dataset,
+        required_purpose="MODEL_TRAINING",
+    )
+    if not is_ml_authorized:
+        # Avoid duplicate message if it was already caught by dataset approval
+        if "APPROVED" not in (purpose_reason or "") or dataset.approval_status == "APPROVED":
+            blocking_issues.append(f"PURPOSE_RESTRICTION: {purpose_reason}")
+
+    # 3. Check for Synthetic Demonstration Provenance
     is_synthetic = False
     name_lower = (dataset.name or "").lower()
     desc_lower = (dataset.description or "").lower()

@@ -132,7 +132,10 @@ The migration chain is 100% linear, strictly version-controlled, and contains ze
                  e9731edc6e55: add_audit_events_hash_chain
                                      |
                                      v
-         79eb1b6cc667: align_cascades_and_performance_indexes (HEAD)
+         79eb1b6cc667: align_cascades_and_performance_indexes
+                                     |
+                                     v
+       e14147f4c29a: add_valuation_results_created_at_index (HEAD)
 ```
 
 ### 2.2 Fresh Database Migration Verification
@@ -142,7 +145,7 @@ A fresh database migration test was executed on an empty database:
 $env:DATABASE_URL="sqlite:///./backend/data/fresh_test.db"
 py -m alembic -c backend/alembic.ini upgrade head
 ```
-**Result:** All 8 migrations applied sequentially from `<base>` to `79eb1b6cc667` with zero errors. All 13 tables, unique constraints, and indexes were constructed cleanly.
+**Result:** All 9 migrations applied sequentially from `<base>` to `e14147f4c29a` with zero errors. All 13 tables, unique constraints, and indexes were constructed cleanly.
 
 ### 2.3 Rollback (Downgrade) Verification
 
@@ -336,7 +339,18 @@ An actual end-to-end backup and restoration cycle was performed and validated on
 
 ---
 
-## Step 6: Database Security & Isolation
+## Step 6: PostGIS & Spatial Functionality Audit
+
+### 6.1 PostGIS Provisioning Status
+- **Docker Infrastructure:** The production container in `docker-compose.yml` specifies `image: postgis/postgis:16-3.4-alpine`. PostGIS 16-3.4 extension binaries are installed and available in the container environment.
+- **Application Reality:** In the physical application codebase, spatial geometry columns (e.g., PostGIS `GEOMETRY(Point, 4326)` or `GEOGRAPHY`) are **provisioned in infrastructure but not yet bound in SQLAlchemy ORM models**.
+- **Coordinate Handling:** Properties and comparable transactions store geospatial coordinates using standard IEEE 754 floating-point columns: `latitude: Float` and `longitude: Float` (`backend/app/models/property.py`).
+- **Geographic Distance Computation:** Distance queries and comparable radius filtering are computed deterministically via Python's Haversine great-circle distance algorithm (`backend/app/services/comparables_service.py` and `geopy`).
+- **Audit Finding:** The containerized database environment is PostGIS-capable. In accordance with audit integrity rules, spatial PostGIS geometry types have not been artificially fabricated into the current schema without genuine registered deed geometry polygons.
+
+---
+
+## Step 7: Database Security & Isolation
 
 ### 6.1 Principle of Least Privilege
 
@@ -360,7 +374,7 @@ In `docker-compose.yml`, the database container runs with standard application-l
 
 ---
 
-## Step 7: Reliability Test Results
+## Step 8: Reliability Test Results
 
 A dedicated automated database reliability test suite was developed in `backend/tests/test_database_reliability.py`. All 12 test scenarios passed cleanly:
 
@@ -399,13 +413,16 @@ backend/tests/test_database_reliability.py::test_backup_retention_prune PASSED [
 | **Uncertainty & Conformal** (`test_uncertainty.py`) | 12 | 12 | 0 | 5.80s |
 | **Valuation Engine Core** (`test_valuation.py`) | 2 | 2 | 0 | 0.12s |
 | **Valuation Parity & Arithmetic** (`test_valuation_parity.py`) | 12 | 12 | 0 | 1.15s |
-| **Total Backend Test Suite** | **141** | **141** | **0** | **29.03s** |
-| **Frontend Test Suite (Node test)** | **26** | **26** | **0** | **413ms** |
-| **Frontend Production Build (Vite)** | **1** | **1** | **0** | **932ms** |
+| **Deployment Health & Readiness** (`test_deployment_health_readiness.py`) | 9 | 9 | 0 | 0.55s |
+| **E2E Comprehensive Matrix** (`test_e2e_comprehensive_matrix.py`) | 24 | 24 | 0 | 1.80s |
+| **Performance Benchmarks** (`test_performance_benchmarks.py`) | 8 | 8 | 0 | 0.70s |
+| **Total Backend Test Suite** | **182** | **182** | **0** | **18.21s** |
+| **Frontend Test Suite (Node test)** | **26** | **26** | **0** | **924ms** |
+| **Frontend Production Build (Vite)** | **1** | **1** | **0** | **482ms** |
 
 ---
 
-## Step 8: Outstanding Risks & Production Recommendations
+## Step 9: Outstanding Risks & Production Recommendations
 
 While the database layer is resilient, fully tested, and prepared for production deployment, the following architectural recommendations are noted for institutional scale-up:
 
@@ -431,10 +448,11 @@ While the database layer is resilient, fully tested, and prepared for production
 
 ## Verification Sign-Off
 
-- **Alembic Revisions:** All 8 revisions present and linear; stamped at `79eb1b6cc667`.
+- **Alembic Revisions:** All 9 revisions present and linear; stamped at `e14147f4c29a` (head).
+- **PostGIS Readiness:** Containerized PostGIS 16-3.4 provisioned; Haversine coordinates active.
 - **Database Consistency:** Zero foreign key orphan records; cascade constraints verified.
 - **Backup & Recovery:** Point-in-time backup executed; restore verified with 100% record match; tamper detection confirmed.
 - **Connection Management:** Connection pool bounds, timeout, pre-ping, and recycling active.
-- **Test Suite Status:** 141 backend tests passed; 26 frontend tests passed; clean Vite build.
+- **Test Suite Status:** 182 backend tests passed; 26 frontend tests passed; clean Vite build.
 - **Application Functionality:** 100% preserved (CatBoost ML gating, Conformal UQ, Gemini AI underwriter, React 19 UI).
 

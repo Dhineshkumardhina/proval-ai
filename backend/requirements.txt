@@ -23,7 +23,15 @@ numpy==2.5.3
 # Cryptography & Password Hashing (Phase 3B Security)
 bcrypt>=4.0.0
 
-# Production Database Drivers & Geospatial (Optional for local SQLite development)
-# Install when connecting to PostgreSQL + PostGIS:
-# psycopg2-binary>=2.9.9
-# geoalchemy2>=0.14.0
+# OpenTelemetry Distributed Tracing & Observability Stack (Phase 6E Harmonization)
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2
+opentelemetry-exporter-otlp-proto-http==1.45.2
+opentelemetry-instrumentation==0.66b2
+opentelemetry-instrumentation-fastapi==0.66b2
+opentelemetry-instrumentation-sqlalchemy==0.66b2
+opentelemetry-instrumentation-httpx==0.66b2
+
+# Production Database Drivers & Geospatial
+psycopg2-binary>=2.9.9
+geoalchemy2>=0.14.0

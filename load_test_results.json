@@ -1,80 +1,80 @@
 {
   "single_user": {
     "total_requests": 100,
-    "wall_duration_sec": 0.669,
-    "throughput_rps": 149.59,
-    "mean_latency_ms": 6.68,
-    "p50_ms": 4.91,
-    "p95_ms": 8.99,
-    "p99_ms": 17.35,
-    "min_ms": 3.09,
-    "max_ms": 101.7,
+    "wall_duration_sec": 0.683,
+    "throughput_rps": 146.37,
+    "mean_latency_ms": 6.83,
+    "p50_ms": 5.49,
+    "p95_ms": 7.88,
+    "p99_ms": 16.48,
+    "min_ms": 3.76,
+    "max_ms": 106.18,
     "error_rate_pct": 0.0
   },
   "concurrent_users": {
     "concurrency_10": {
       "concurrency_level": 10,
       "total_requests": 200,
-      "wall_duration_sec": 2.054,
-      "throughput_rps": 97.35,
-      "mean_latency_ms": 98.98,
-      "p50_ms": 100.99,
-      "p95_ms": 132.5,
-      "p99_ms": 144.86,
+      "wall_duration_sec": 1.382,
+      "throughput_rps": 144.75,
+      "mean_latency_ms": 64.62,
+      "p50_ms": 63.9,
+      "p95_ms": 83.88,
+      "p99_ms": 88.56,
       "error_rate_pct": 0.0,
-      "cpu_utilization_pct": 47.9,
-      "memory_rss_mb": 278.88
+      "cpu_utilization_pct": 38.6,
+      "memory_rss_mb": 274.95
     },
     "concurrency_25": {
       "concurrency_level": 25,
       "total_requests": 200,
-      "wall_duration_sec": 2.487,
-      "throughput_rps": 80.43,
-      "mean_latency_ms": 290.42,
-      "p50_ms": 288.64,
-      "p95_ms": 435.62,
-      "p99_ms": 504.71,
+      "wall_duration_sec": 1.635,
+      "throughput_rps": 122.32,
+      "mean_latency_ms": 184.07,
+      "p50_ms": 178.97,
+      "p95_ms": 266.3,
+      "p99_ms": 324.31,
       "error_rate_pct": 0.0,
-      "cpu_utilization_pct": 52.0,
-      "memory_rss_mb": 285.61
+      "cpu_utilization_pct": 44.9,
+      "memory_rss_mb": 284.12
     },
     "concurrency_50": {
       "concurrency_level": 50,
       "total_requests": 200,
-      "wall_duration_sec": 2.375,
-      "throughput_rps": 84.2,
-      "mean_latency_ms": 542.83,
-      "p50_ms": 562.58,
-      "p95_ms": 988.38,
-      "p99_ms": 1145.47,
+      "wall_duration_sec": 1.737,
+      "throughput_rps": 115.15,
+      "mean_latency_ms": 384.39,
+      "p50_ms": 341.98,
+      "p95_ms": 758.32,
+      "p99_ms": 1098.34,
       "error_rate_pct": 0.0,
-      "cpu_utilization_pct": 47.5,
-      "memory_rss_mb": 292.71
+      "cpu_utilization_pct": 42.3,
+      "memory_rss_mb": 290.15
     }
   },
   "concurrent_valuation": {
     "total_requests": 100,
     "concurrency": 50,
-    "wall_duration_sec": 0.216,
-    "throughput_rps": 463.67,
-    "mean_latency_ms": 88.86,
-    "p50_ms": 87.93,
-    "p95_ms": 110.71,
+    "wall_duration_sec": 0.307,
+    "throughput_rps": 325.77,
+    "mean_latency_ms": 131.51,
+    "p50_ms": 129.17,
+    "p95_ms": 148.74,
     "error_rate_pct": 0.0
   },
   "database_connection": {
     "dialect": "sqlite",
     "connectivity_ok": true,
-    "mean_probe_latency_ms": 0.053,
-    "min_probe_latency_ms": 0.03,
-    "max_probe_latency_ms": 0.38
+    "mean_probe_latency_ms": 0.133,
+    "min_probe_latency_ms": 0.07,
+    "max_probe_latency_ms": 0.48
   },
   "fault_recovery": {
     "induced_404_status": 404,
     "induced_422_status": 422,
     "induced_401_status": 401,
     "post_failure_recovery_status": 200,
-    "post_failure_recovery_latency_ms": 9.03,
+    "post_failure_recovery_latency_ms": 8.41,
     "recovery_successful": true
   }
 }

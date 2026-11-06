@@ -23,9 +23,19 @@ class DatasetResponse(BaseModel):
     duplicateRows: int = Field(..., validation_alias="duplicateRows", serialization_alias="duplicateRows")
     status: str
     isUsableForMl: bool = Field(..., validation_alias="isUsableForMl", serialization_alias="isUsableForMl")
+    approvalStatus: str = Field(default="DRAFT", validation_alias="approvalStatus", serialization_alias="approvalStatus")
+    dataOwner: str = Field(default="Institutional Data Officer", validation_alias="dataOwner", serialization_alias="dataOwner")
+    responsibleReviewer: Optional[str] = Field(default=None, validation_alias="responsibleReviewer", serialization_alias="responsibleReviewer")
+    reviewedAt: Optional[datetime] = Field(default=None, validation_alias="reviewedAt", serialization_alias="reviewedAt")
+    reviewNotes: Optional[str] = Field(default=None, validation_alias="reviewNotes", serialization_alias="reviewNotes")
     createdAt: datetime = Field(..., validation_alias="createdAt", serialization_alias="createdAt")
 
     model_config = ConfigDict(populate_by_name=True, serialize_by_alias=True)
+
+
+class DatasetApprovalRequest(BaseModel):
+    approval_status: str = Field(..., pattern=r"^(DRAFT|UNDER_REVIEW|APPROVED|REJECTED|DEPRECATED)$")
+    review_notes: str = Field(..., min_length=5, max_length=1000)
 
 
 class ImportedTransactionResponse(BaseModel):
@@ -45,6 +55,7 @@ class ImportedTransactionResponse(BaseModel):
     transactionDate: datetime = Field(..., validation_alias="transactionDate", serialization_alias="transactionDate")
     transactionQuarter: str = Field(..., validation_alias="transactionQuarter", serialization_alias="transactionQuarter")
     carpetAreaSqFt: float = Field(..., validation_alias="carpetAreaSqFt", serialization_alias="carpetAreaSqFt")
+    builtUpAreaSqFt: Optional[float] = Field(default=None, validation_alias="builtUpAreaSqFt", serialization_alias="builtUpAreaSqFt")
     superBuiltUpAreaSqFt: Optional[float] = Field(default=None, validation_alias="superBuiltUpAreaSqFt", serialization_alias="superBuiltUpAreaSqFt")
     floorNo: Optional[int] = Field(default=None, validation_alias="floorNo", serialization_alias="floorNo")
     totalFloors: Optional[int] = Field(default=None, validation_alias="totalFloors", serialization_alias="totalFloors")

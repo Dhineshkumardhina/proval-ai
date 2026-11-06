@@ -26,6 +26,7 @@ from app.api.v1.endpoints.health import (
     readiness_check as health_readiness_check,
     get_health as health_diagnostic_check,
 )
+from app.core.telemetry import init_telemetry, observability_registry
 
 # Initialize structured logging subsystem
 setup_logging(environment=settings.ENVIRONMENT)
@@ -62,6 +63,9 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# OpenTelemetry Distributed Tracing & Observability (Phase 6E)
+init_telemetry(app=app, engine=engine)
 
 # Middleware Pipeline (Executed in reverse order of addition)
 # 1. Security HTTP Headers & Cookie hardening
@@ -111,6 +115,13 @@ def root_readiness(response: Response, db: Session = Depends(get_db)):
 def root_health(response: Response, db: Session = Depends(get_db)):
     """Root comprehensive system health check."""
     return health_diagnostic_check(response=response, db=db)
+
+
+@app.get("/metrics", tags=["Observability"], summary="Root Observability Metrics Endpoint")
+def root_metrics(db: Session = Depends(get_db)):
+    """Root operational observability metrics for monitoring systems."""
+    observability_registry.record_db_pool_status(engine)
+    return observability_registry.get_summary(db_session=db)
 
 
 # Include V1 Router under /api/v1

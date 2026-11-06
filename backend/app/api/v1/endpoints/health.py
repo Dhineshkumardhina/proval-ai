@@ -10,13 +10,13 @@ from typing import Any, Dict
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-import urllib.request
-import urllib.error
+import httpx
 
 from app.core.config import settings
-from app.core.database import get_db, check_db_connectivity
+from app.core.database import get_db, check_db_connectivity, engine
 from app.services import audit_service
 from app.ml.model_service import MLModelService
+from app.core.telemetry import observability_registry
 
 router = APIRouter()
 ml_service = MLModelService()
@@ -39,13 +39,16 @@ def check_gemini_integration() -> Dict[str, Any]:
             "detail": "Deterministic rule-based underwriting active (no external cloud dependency)",
         }
 
-    # If API key is provided, perform live availability probe against Gemini service
+    # If API key is provided, perform live availability probe against Gemini service via secure header
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}?key={api_key}"
-        req = urllib.request.Request(url, headers={"User-Agent": "PropValAI-HealthCheck/1.0"})
-        # 3.0 second probe timeout
-        with urllib.request.urlopen(req, timeout=3.0) as resp:
-            if resp.status == 200:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}"
+        headers = {
+            "x-goog-api-key": api_key,
+            "User-Agent": "PropValAI-HealthCheck/1.0",
+        }
+        with httpx.Client(timeout=3.0) as client:
+            resp = client.get(url, headers=headers)
+            if resp.status_code == 200:
                 return {
                     "status": "available",
                     "model": settings.GEMINI_MODEL,
@@ -58,14 +61,14 @@ def check_gemini_integration() -> Dict[str, Any]:
                     "status": "unavailable",
                     "model": settings.GEMINI_MODEL,
                     "cloudProcessingEnabled": False,
-                    "error": f"Gemini API returned HTTP status {resp.status}",
+                    "error": f"Gemini API returned HTTP status {resp.status_code}",
                 }
-    except urllib.error.HTTPError as he:
+    except httpx.HTTPStatusError as he:
         return {
             "status": "unavailable",
             "model": settings.GEMINI_MODEL,
             "cloudProcessingEnabled": False,
-            "error": f"Gemini API authentication/endpoint error: HTTP {he.code}",
+            "error": f"Gemini API authentication/endpoint error: HTTP {he.response.status_code}",
         }
     except Exception as e:
         return {
@@ -191,6 +194,12 @@ def get_health(response: Response, db: Session = Depends(get_db)):
     # 1. Unhealthy if database or audit chain fails
     # 2. Degraded if Gemini is configured but unavailable, or ML is unavailable
     # 3. Healthy if DB, audit trail, and components are fully operational
+    if is_connected:
+        observability_registry.record_db_latency(db_latency_ms)
+
+    if not audit_valid and audit_status != "unverified":
+        observability_registry.record_audit_chain_failure()
+
     if db_status != "connected" or not audit_valid:
         overall_status = "unhealthy"
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
@@ -223,3 +232,11 @@ def get_health(response: Response, db: Session = Depends(get_db)):
             "geminiIntegration": gemini_status,
         },
     }
+
+
+@router.get("/metrics", summary="Operational Observability Metrics")
+@router.get("/health/metrics", summary="Operational Observability Metrics Alias")
+def get_operational_metrics(db: Session = Depends(get_db)):
+    """System-wide operational metrics for CloudWatch, Datadog, Prometheus, or institutional APM."""
+    observability_registry.record_db_pool_status(engine)
+    return observability_registry.get_summary(db_session=db)

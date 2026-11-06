@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey, JSON, Index
+from sqlalchemy import Column, String, Float, Integer, Boolean, DateTime, ForeignKey, JSON, Index
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -20,6 +20,7 @@ class ValuationCaseModel(Base):
     )
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    institution_id = Column(String(36), ForeignKey("institutions.id", ondelete="SET NULL"), nullable=True, index=True)
     property_id = Column(String(36), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # Borrower & Underwriting info
@@ -53,6 +54,19 @@ class ValuationCaseModel(Base):
     survey_photos = Column(JSON, default=list)
     audit_notes = Column(JSON, default=list)
 
+    # Phase 7B: Pilot Case Management & Advisory Safety Controls
+    case_reference = Column(String(64), nullable=True, index=True)
+    assigned_valuer = Column(String(128), default="Empaneled Field Valuer")
+    reviewing_credit_officer = Column(String(128), default="")
+    valuation_engine_version = Column(String(32), default="hedonic-scorecard-v0.2.0")
+    valuation_methodology = Column(String(64), default="DETERMINISTIC_HEDONIC")
+    advisory_classification = Column(String(32), default="ADVISORY_ONLY")
+    divergence_pct = Column(Float, default=0.0)
+    requires_senior_review = Column(Boolean, default=False)
+    human_sign_off_by = Column(String(128), nullable=True)
+    human_sign_off_date = Column(DateTime(timezone=True), nullable=True)
+    human_sign_off_notes = Column(String(1000), default="")
+
     # Data Provenance
     data_source = Column(String(64), nullable=False, default="synthetic-demo")
 
@@ -67,6 +81,7 @@ class ValuationCaseModel(Base):
     # Relationships
     property = relationship("PropertyRecord", back_populates="valuation_cases")
     valuation_results = relationship("ValuationResultModel", back_populates="case", cascade="all, delete-orphan")
+    institution = relationship("InstitutionModel", backref="valuation_cases")
 
 
 class ValuationResultModel(Base):
@@ -76,6 +91,7 @@ class ValuationResultModel(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     case_id = Column(String(36), ForeignKey("valuation_cases.id", ondelete="CASCADE"), nullable=True, index=True)
+    institution_id = Column(String(36), ForeignKey("institutions.id", ondelete="CASCADE"), nullable=True, index=True)
 
     # Engine & Provenance Metadata
     engine_version = Column(String(32), nullable=False, default="0.2.0")

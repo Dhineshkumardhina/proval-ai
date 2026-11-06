@@ -121,3 +121,56 @@ def get_audit_summary(
     """Retrieve audit surveillance summary."""
     return audit_service.get_audit_summary(db)
 
+
+@router.post(
+    "/anchor/epoch",
+    summary="Anchor Audit Sequence into Merkle Root Epoch",
+    description="Calculates a cryptographic Merkle root hash over sequential audit blocks with simulated RFC 3161 proof.",
+)
+def create_anchor_epoch(
+    db: Session = Depends(get_db),
+    user: UserSession = Depends(require_roles([ROLE_ADMIN])),
+):
+    """Anchor audit blocks into an immutable epoch record."""
+    epoch = audit_service.ExternalAuditAnchorService.anchor_epoch(db=db, actor_id=user.username)
+    return {
+        "id": epoch.id,
+        "epoch_number": epoch.epoch_number,
+        "merkle_root_hash": epoch.merkle_root_hash,
+        "start_sequence": epoch.start_sequence,
+        "end_sequence": epoch.end_sequence,
+        "event_count": epoch.event_count,
+        "anchor_manifest": epoch.anchor_manifest,
+        "anchor_token": epoch.anchor_token,
+        "anchored_at": epoch.anchored_at,
+    }
+
+
+@router.get(
+    "/anchor/epochs",
+    summary="List Anchored Merkle Root Epochs",
+)
+def list_anchor_epochs(
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_COMPLIANCE_AUDITOR, ROLE_ADMIN])),
+):
+    """Retrieve historical Merkle root anchoring epochs."""
+    epochs = audit_service.ExternalAuditAnchorService.list_anchors(db=db, limit=limit, offset=offset)
+    return [
+        {
+            "id": ep.id,
+            "epoch_number": ep.epoch_number,
+            "merkle_root_hash": ep.merkle_root_hash,
+            "start_sequence": ep.start_sequence,
+            "end_sequence": ep.end_sequence,
+            "event_count": ep.event_count,
+            "anchor_manifest": ep.anchor_manifest,
+            "anchor_token": ep.anchor_token,
+            "anchored_at": ep.anchored_at,
+        }
+        for ep in epochs
+    ]
+
+

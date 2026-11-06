@@ -2,6 +2,7 @@
 
 import hashlib
 import io
+import json
 import math
 import re
 from datetime import datetime, timezone
@@ -17,6 +18,7 @@ from app.models.dataset import (
     DuplicateRecordModel,
     DataQualityReportModel,
 )
+from app.services.privacy_service import scrub_raw_payload_dict
 
 COLUMN_SYNONYMS = {
     "price": [
@@ -332,6 +334,8 @@ def _ingest_dataset_impl(
     records = df.to_dict(orient="records")
     for idx, row in enumerate(records):
         raw_row_data = {str(k): (None if (isinstance(v, float) and math.isnan(v)) or v is None else v) for k, v in row.items()}
+        # Apply pre-persistence DPDP PII scrubbing
+        raw_row_data, _, _ = scrub_raw_payload_dict(raw_row_data)
 
         # Extract mapped values
         raw_price = row.get(col_map.get("price"))
@@ -558,6 +562,43 @@ def _ingest_dataset_impl(
     dataset.duplicate_rows = duplicate_count
     dataset.status = "COMPLETED"
     dataset.is_usable_for_ml = meets_ml
+
+    # Automatically set initial governance status to UNDER_REVIEW upon successful ingestion
+    if dataset.approval_status == "DRAFT":
+        dataset.approval_status = "UNDER_REVIEW"
+
+    # Persist verification evidence provenance for validated transactions (Objective 7)
+    from app.models.verification import VerificationEvidenceModel, TransactionLifecycleState
+    evidence_items = []
+    for tx in pending_transactions:
+        canonical_tx_str = json.dumps({
+            "fingerprint": tx.fingerprint_hash,
+            "city": tx.city,
+            "locality": tx.locality,
+            "price": tx.transaction_price,
+            "area": tx.carpet_area_sqft,
+            "date": tx.transaction_date.isoformat(),
+        }, sort_keys=True, separators=(",", ":"))
+        tx_hash = hashlib.sha256(canonical_tx_str.encode("utf-8")).hexdigest()
+        ev = VerificationEvidenceModel(
+            transaction_id=tx.id,
+            verification_status=TransactionLifecycleState.VERIFIED,
+            verifier_id="INGESTION_SERVICE",
+            verifier_method="FILE_UPLOAD_NORMALIZATION",
+            source_origin=dataset.source_type,
+            source_document_ref=dataset.original_filename,
+            original_record_hash=tx.fingerprint_hash,
+            normalized_record_hash=tx_hash,
+            dataset_version="v0.1.0-draft",
+            verification_evidence_details={
+                "dataset_id": dataset.id,
+                "row_index": tx.row_index,
+                "price_per_sqft": tx.price_per_sqft,
+            },
+        )
+        evidence_items.append(ev)
+    if evidence_items:
+        db.add_all(evidence_items)
 
     quality_report = DataQualityReportModel(
         dataset_id=dataset.id,

@@ -14,11 +14,13 @@ client_ip_ctx: ContextVar[Optional[str]] = ContextVar("client_ip", default=None)
 
 # Patterns matching sensitive parameters and secrets
 SENSITIVE_PATTERNS = [
-    (re.compile(r'(password|secret|jwt|token|api_key|authorization|bearer)\s*[:=]\s*["\']?([^"\'\s,;]+)', re.IGNORECASE), r'\1: "[REDACTED]"'),
     (re.compile(r'Bearer\s+[A-Za-z0-9\-_\.=]+', re.IGNORECASE), 'Bearer [REDACTED]'),
+    (re.compile(r'(password|secret|jwt|token|api_key|authorization|bearer)\s*[:=]\s*["\']?([^"\'\s,;]+)', re.IGNORECASE), r'\1: "[REDACTED]"'),
+    (re.compile(r'(postgres(ql)?:\/\/[^:]+:)([^@]+)(@)', re.IGNORECASE), r'\1[REDACTED]\4'),
     (re.compile(r'\b[2-9]{1}[0-9]{3}\s?[0-9]{4}\s?[0-9]{4}\b'), '[REDACTED_AADHAAR]'),
     (re.compile(r'\b[A-Z]{5}[0-9]{4}[A-Z]{1}\b'), '[REDACTED_PAN]'),
-    (re.compile(r'(postgres(ql)?:\/\/[^:]+:)([^@]+)(@)', re.IGNORECASE), r'\1[REDACTED]\4'),
+    (re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'), '[REDACTED_EMAIL]'),
+    (re.compile(r'(?:\+91[\-\s]?)?[6-9]\d{9}\b'), '[REDACTED_PHONE]'),
 ]
 
 
@@ -61,6 +63,18 @@ class StructuredJsonFormatter(logging.Formatter):
         req_id = request_id_ctx.get() or getattr(record, "request_id", None)
         if req_id:
             log_payload["requestId"] = req_id
+
+        # OpenTelemetry distributed trace correlation (Phase 6E)
+        try:
+            from opentelemetry import trace
+            span = trace.get_current_span()
+            if span and span.is_recording():
+                span_ctx = span.get_span_context()
+                if span_ctx.is_valid:
+                    log_payload["traceId"] = format(span_ctx.trace_id, "032x")
+                    log_payload["spanId"] = format(span_ctx.span_id, "016x")
+        except Exception:
+            pass
 
         ip = client_ip_ctx.get() or getattr(record, "client_ip", None)
         if ip:

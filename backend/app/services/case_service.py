@@ -4,6 +4,7 @@ import math
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Tuple
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload, selectinload, contains_eager
 from sqlalchemy import or_, desc
 
@@ -106,6 +107,18 @@ def to_case_response(case: ValuationCaseModel) -> ValuationCaseResponse:
         ltvRatioPct=case.ltv_ratio_pct,
         legalRiskPenaltyPct=case.legal_risk_penalty_pct,
         assignedUnderwriter=case.assigned_underwriter,
+        institutionId=case.institution_id,
+        caseReference=getattr(case, "case_reference", None) or prop.application_no,
+        assignedValuer=getattr(case, "assigned_valuer", "Empaneled Field Valuer") or "Empaneled Field Valuer",
+        reviewingCreditOfficer=getattr(case, "reviewing_credit_officer", "") or "",
+        valuationEngineVersion=getattr(case, "valuation_engine_version", "hedonic-scorecard-v0.2.0") or "hedonic-scorecard-v0.2.0",
+        valuationMethodology=getattr(case, "valuation_methodology", "DETERMINISTIC_HEDONIC") or "DETERMINISTIC_HEDONIC",
+        advisoryClassification="ADVISORY_ONLY",
+        divergencePct=float(getattr(case, "divergence_pct", 0.0) or 0.0),
+        requiresSeniorReview=bool(getattr(case, "requires_senior_review", False)),
+        humanSignOffBy=getattr(case, "human_sign_off_by", None),
+        humanSignOffDate=case.human_sign_off_date.isoformat() if getattr(case, "human_sign_off_date", None) else None,
+        humanSignOffNotes=getattr(case, "human_sign_off_notes", "") or "",
         createdAt=created_at_str,
         lastUpdated=updated_at_str,
         reraRegistration=case.rera_registration or "",
@@ -125,12 +138,15 @@ def list_cases(
     city: Optional[str] = None,
     status: Optional[str] = None,
     search: Optional[str] = None,
+    institution_id: Optional[str] = None,
     limit: int = 50,
     offset: int = 0,
 ) -> Tuple[List[ValuationCaseResponse], int]:
     """Retrieve valuation cases with filtering, search, and pagination."""
     query = db.query(ValuationCaseModel).join(PropertyRecord)
 
+    if institution_id:
+        query = query.filter(ValuationCaseModel.institution_id == institution_id)
     if city:
         query = query.filter(PropertyRecord.city == city)
     if status:
@@ -178,6 +194,7 @@ def get_case_by_id(db: Session, case_id: str) -> Optional[ValuationCaseResponse]
 
 def create_case(db: Session, case_in: ValuationCaseCreate) -> ValuationCaseResponse:
     """Create new property record and valuation case, calculate baseline estimate, and save."""
+    institution_id = case_in.institutionId
     new_case_id = f"case-{int(datetime.now(timezone.utc).timestamp() * 1000)}"
     prop_id = str(uuid.uuid4())
     app_no = f"HFC-{case_in.city[:3].upper()}-2026-{uuid.uuid4().hex[:5].upper()}"
@@ -196,6 +213,7 @@ def create_case(db: Session, case_in: ValuationCaseCreate) -> ValuationCaseRespo
     # 1. Create Property
     prop = PropertyRecord(
         id=prop_id,
+        institution_id=institution_id,
         application_no=app_no,
         project_name=case_in.projectName,
         unit_address=case_in.unitAddress,
@@ -271,35 +289,7 @@ def create_case(db: Session, case_in: ValuationCaseCreate) -> ValuationCaseRespo
 
     audit_notes = case_in.auditNotes or ["Case ingested into valuation engine pipeline."]
 
-    # 3. Create Case
-    case = ValuationCaseModel(
-        id=new_case_id,
-        property_id=prop_id,
-        borrower_name=case_in.borrowerName,
-        co_borrower_name=case_in.coBorrowerName,
-        cibil_score=case_in.cibilScore,
-        loan_requested=case_in.loanRequested,
-        declared_agreement_value=case_in.declaredAgreementValue,
-        branch=case_in.branch,
-        assigned_underwriter=case_in.assignedUnderwriter,
-        status="READY_FOR_APPROVAL",
-        status_label="Ready for Underwriter Sign-off",
-        underwriter_haircut_pct=case_in.underwriterHaircutPct,
-        distress_discount_pct=case_in.distressDiscountPct,
-        ltv_ratio_pct=case_in.ltvRatioPct,
-        legal_risk_penalty_pct=case_in.legalRiskPenaltyPct,
-        rera_registration=case_in.reraRegistration or f"PRM/{case_in.city[:2].upper()}/RERA/2026/0014",
-        bbmp_plan_approval_no=case_in.bbmpPlanApprovalNo or f"PLAN/{case_in.city[:3].upper()}/2024/889",
-        title_chain_years=case_in.titleChainYears,
-        encumbrance_status=case_in.encumbranceStatus,
-        comparables=comparables,
-        document_fields=document_fields,
-        survey_photos=survey_photos,
-        audit_notes=audit_notes,
-        data_source=case_in.dataSource,
-    )
-
-    # 4. Calculate Valuation
+    # 3. Calculate Valuation Estimate First
     val_params = ValuationInputParams(
         carpetAreaSqFt=case_in.carpetAreaSqFt,
         superBuiltUpAreaSqFt=case_in.superBuiltUpAreaSqFt,
@@ -317,8 +307,55 @@ def create_case(db: Session, case_in: ValuationCaseCreate) -> ValuationCaseRespo
     )
     val_res = calculate_valuation(val_params)
 
+    # Phase 7B: Valuation Divergence & Risk Review Gates
+    net_val = float(val_res.netAssessedValue)
+    declared_val = float(case_in.declaredAgreementValue)
+    divergence_pct = (abs(net_val - declared_val) / declared_val * 100.0) if declared_val > 0 else 0.0
+    requires_senior_review = bool(divergence_pct > 15.0 or val_res.riskTier == "HIGH_ALERT")
+
+    initial_status = "READY_FOR_APPROVAL"
+    initial_status_label = "Ready for Underwriter Sign-off"
+
+    # 4. Create Case Record
+    case = ValuationCaseModel(
+        id=new_case_id,
+        institution_id=case_in.institutionId,
+        property_id=prop_id,
+        case_reference=case_in.caseReference or app_no,
+        borrower_name=case_in.borrowerName,
+        co_borrower_name=case_in.coBorrowerName,
+        cibil_score=case_in.cibilScore,
+        loan_requested=case_in.loanRequested,
+        declared_agreement_value=case_in.declaredAgreementValue,
+        branch=case_in.branch,
+        assigned_underwriter=case_in.assignedUnderwriter,
+        assigned_valuer=case_in.assignedValuer or "Empaneled Field Valuer",
+        reviewing_credit_officer=case_in.reviewingCreditOfficer or "",
+        valuation_engine_version="hedonic-scorecard-v0.2.0",
+        valuation_methodology="DETERMINISTIC_HEDONIC",
+        advisory_classification="ADVISORY_ONLY",
+        divergence_pct=round(divergence_pct, 2),
+        requires_senior_review=requires_senior_review,
+        status=initial_status,
+        status_label=initial_status_label,
+        underwriter_haircut_pct=case_in.underwriterHaircutPct,
+        distress_discount_pct=case_in.distressDiscountPct,
+        ltv_ratio_pct=case_in.ltvRatioPct,
+        legal_risk_penalty_pct=case_in.legalRiskPenaltyPct,
+        rera_registration=case_in.reraRegistration or f"PRM/{case_in.city[:2].upper()}/RERA/2026/0014",
+        bbmp_plan_approval_no=case_in.bbmpPlanApprovalNo or f"PLAN/{case_in.city[:3].upper()}/2024/889",
+        title_chain_years=case_in.titleChainYears,
+        encumbrance_status=case_in.encumbranceStatus,
+        comparables=comparables,
+        document_fields=document_fields,
+        survey_photos=survey_photos,
+        audit_notes=audit_notes,
+        data_source=case_in.dataSource,
+    )
+
     db_val = ValuationResultModel(
         case_id=new_case_id,
+        institution_id=institution_id,
         engine_version=val_res.engineVersion,
         engine_type=val_res.engineType,
         data_source=val_res.dataSource,
@@ -426,6 +463,7 @@ def update_case(db: Session, case_id: str, case_in: ValuationCaseUpdate) -> Opti
 
     db_val = ValuationResultModel(
         case_id=case_id,
+        institution_id=case.institution_id,
         engine_version=val_res.engineVersion,
         engine_type=val_res.engineType,
         data_source=val_res.dataSource,
@@ -458,11 +496,38 @@ def update_case_status(
     case_id: str,
     new_status: str,
     audit_note: Optional[str] = None,
+    human_sign_off_by: Optional[str] = None,
+    human_sign_off_notes: Optional[str] = None,
+    actor_role: Optional[str] = None,
 ) -> Optional[ValuationCaseResponse]:
-    """Transition case workflow status and record audit ledger note."""
+    """Transition case workflow status and record audit ledger note with pilot safety controls."""
     case = db.query(ValuationCaseModel).filter(ValuationCaseModel.id == case_id).first()
     if not case:
         return None
+
+    # Mandatory Pilot Safety Controls (Phase 7B)
+    if new_status == "APPROVED":
+        # Control 2 & 3: Automated valuation must never independently sanction a loan.
+        # Final collateral valuation and LTV decisions require authorized human approval.
+        effective_sign_off = human_sign_off_by or (audit_note.strip() if audit_note else None)
+        if not effective_sign_off:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Automated valuation cannot sanction loan independently. Final approval requires explicit authorized human sign-off.",
+            )
+
+        # Control 5 & 6: Valuation divergence > 15% or HIGH_ALERT requires senior underwriter review
+        div_pct = float(getattr(case, "divergence_pct", 0.0) or 0.0)
+        is_high_risk = bool(div_pct > 15.0 or case.status == "HIGH_ALERT" or getattr(case, "requires_senior_review", False))
+        if is_high_risk and actor_role and actor_role not in ["SENIOR_UNDERWRITER", "RISK_COMMITTEE_MEMBER", "ADMIN"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Case has valuation divergence of {div_pct:.1f}% (>15%) or HIGH_ALERT and requires Senior Underwriter or Risk Committee approval. Current role: {actor_role}",
+            )
+
+        case.human_sign_off_by = human_sign_off_by or (actor_role or "Authorized Underwriter")
+        case.human_sign_off_date = datetime.now(timezone.utc)
+        case.human_sign_off_notes = human_sign_off_notes or (audit_note or "")
 
     case.status = new_status
     case.status_label = STATUS_LABELS.get(new_status, new_status)

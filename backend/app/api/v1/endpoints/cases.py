@@ -1,18 +1,21 @@
 """Valuation Case lifecycle and Underwriting API endpoints."""
 
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status as http_status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.models.institution import InstitutionModel
 from app.core.security import (
     get_current_user,
     require_roles,
+    enforce_tenant_isolation,
     UserSession,
     ROLE_CREDIT_UNDERWRITER,
     ROLE_SENIOR_UNDERWRITER,
     ROLE_RISK_COMMITTEE_MEMBER,
     ROLE_ADMIN,
+    ROLE_INSTITUTION_ADMIN,
 )
 from app.schemas.case import (
     ValuationCaseCreate,
@@ -36,17 +39,34 @@ def list_cases(
     city: Optional[str] = Query(default=None, description="Filter by Indian Metro City"),
     status: Optional[str] = Query(default=None, description="Filter by Workflow Status"),
     search: Optional[str] = Query(default=None, description="Search borrower, applicationNo, project"),
+    institution_id: Optional[str] = Query(default=None, description="Filter by Institution Tenant"),
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
     user: UserSession = Depends(get_current_user),
 ):
-    """Retrieve list of cases."""
+    """Retrieve list of cases with tenant isolation."""
+    effective_inst_id = user.institution_id or institution_id
+    if effective_inst_id:
+        inst = db.query(InstitutionModel).filter(InstitutionModel.id == effective_inst_id).first()
+        if inst:
+            if inst.status == "SUSPENDED":
+                raise HTTPException(
+                    status_code=http_status.HTTP_403_FORBIDDEN,
+                    detail=f"Institution '{inst.code}' is SUSPENDED. Pilot case access is blocked.",
+                )
+            if inst.status not in ["APPROVED_FOR_PILOT", "ACTIVE"] and user.role != ROLE_ADMIN:
+                raise HTTPException(
+                    status_code=http_status.HTTP_403_FORBIDDEN,
+                    detail=f"Institution '{inst.code}' (status: {inst.status}) is not authorized for pilot operations. Status must be APPROVED_FOR_PILOT.",
+                )
+
     items, total = case_service.list_cases(
         db=db,
         city=city,
         status=status,
         search=search,
+        institution_id=effective_inst_id,
         limit=limit,
         offset=offset,
     )
@@ -56,16 +76,34 @@ def list_cases(
 @router.post(
     "",
     response_model=ValuationCaseResponse,
-    status_code=status.HTTP_201_CREATED,
+    status_code=http_status.HTTP_201_CREATED,
     summary="Create Valuation Case",
     description="Intake a new collateral file, calculate baseline valuation estimate, and save to database.",
 )
 def create_case(
     case_in: ValuationCaseCreate,
     db: Session = Depends(get_db),
-    user: UserSession = Depends(require_roles([ROLE_CREDIT_UNDERWRITER, ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN])),
+    user: UserSession = Depends(require_roles([ROLE_CREDIT_UNDERWRITER, ROLE_SENIOR_UNDERWRITER, ROLE_ADMIN, ROLE_INSTITUTION_ADMIN])),
 ):
     """Create a new valuation case."""
+    if user.institution_id:
+        case_in.institutionId = user.institution_id
+
+    target_inst_id = case_in.institutionId
+    if target_inst_id:
+        inst = db.query(InstitutionModel).filter(InstitutionModel.id == target_inst_id).first()
+        if inst:
+            if inst.status == "SUSPENDED":
+                raise HTTPException(
+                    status_code=http_status.HTTP_403_FORBIDDEN,
+                    detail=f"Institution '{inst.code}' is SUSPENDED. Cannot create pilot cases.",
+                )
+            if inst.status not in ["APPROVED_FOR_PILOT", "ACTIVE"] and user.role != ROLE_ADMIN:
+                raise HTTPException(
+                    status_code=http_status.HTTP_403_FORBIDDEN,
+                    detail=f"Institution '{inst.code}' (status: {inst.status}) is not authorized for pilot operations. Status must be APPROVED_FOR_PILOT.",
+                )
+
     created = case_service.create_case(db=db, case_in=case_in)
     audit_service.record_audit_event(
         db=db,
@@ -99,9 +137,10 @@ def get_case(
     case = case_service.get_case_by_id(db=db, case_id=case_id)
     if not case:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' not found.",
         )
+    enforce_tenant_isolation(user, case.institutionId)
     return case
 
 
@@ -121,28 +160,29 @@ def update_case(
     existing = case_service.get_case_by_id(db=db, case_id=case_id)
     if not existing:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' not found.",
         )
+    enforce_tenant_isolation(user, existing.institutionId)
 
     # Finalized case protection: Approved or Rejected cases cannot be modified by non-admin underwriters
     if existing.status in ["APPROVED", "REJECTED"] and user.role != ROLE_ADMIN:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=http_status.HTTP_400_BAD_REQUEST,
             detail=f"Valuation case '{case_id}' is finalized ({existing.status}) and locked against alterations. Administrative clearance is required to reopen.",
         )
 
     # Privilege escalation guard: Only Senior Underwriters, Risk Committee, and Admins can alter status
     if case_in.status is not None and user.role not in [ROLE_SENIOR_UNDERWRITER, ROLE_RISK_COMMITTEE_MEMBER, ROLE_ADMIN]:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=http_status.HTTP_403_FORBIDDEN,
             detail="Access denied: Credit Underwriters cannot modify case workflow status. Use authorized status transition endpoints.",
         )
 
     updated = case_service.update_case(db=db, case_id=case_id, case_in=case_in)
     if not updated:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' not found.",
         )
     audit_service.record_audit_event(
@@ -169,15 +209,26 @@ def update_case_status(
     user: UserSession = Depends(require_roles([ROLE_SENIOR_UNDERWRITER, ROLE_RISK_COMMITTEE_MEMBER, ROLE_ADMIN])),
 ):
     """Update workflow status."""
+    existing = case_service.get_case_by_id(db=db, case_id=case_id)
+    if not existing:
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND,
+            detail=f"Valuation case '{case_id}' not found.",
+        )
+    enforce_tenant_isolation(user, existing.institutionId)
+
     updated = case_service.update_case_status(
         db=db,
         case_id=case_id,
         new_status=status_in.status,
         audit_note=status_in.auditNote,
+        human_sign_off_by=status_in.humanSignOffBy,
+        human_sign_off_notes=status_in.humanSignOffNotes,
+        actor_role=user.role,
     )
     if not updated:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' not found.",
         )
 
@@ -218,9 +269,10 @@ def delete_case(
     case = case_service.get_case_by_id(db=db, case_id=case_id)
     if not case:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' not found.",
         )
+    enforce_tenant_isolation(user, case.institutionId)
 
     # Record audit event BEFORE deletion so action is permanently traceable
     audit_service.record_audit_event(
@@ -242,7 +294,7 @@ def delete_case(
     deleted = case_service.delete_case(db=db, case_id=case_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=http_status.HTTP_404_NOT_FOUND,
             detail=f"Valuation case '{case_id}' could not be deleted.",
         )
     return {"message": "Valuation case deleted successfully", "id": case_id}

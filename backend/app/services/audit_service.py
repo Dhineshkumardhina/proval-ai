@@ -50,6 +50,23 @@ EVENT_MODEL_REGISTERED = "MODEL_REGISTERED"
 EVENT_DATASET_INGESTED = "DATASET_INGESTED"
 EVENT_ADMIN_ACTION = "ADMIN_ACTION"
 
+# Phase 4B-1 Institutional Data Governance Event Types
+EVENT_DATA_SOURCE_REGISTERED = "DATA_SOURCE_REGISTERED"
+EVENT_DATA_SOURCE_STATUS_CHANGED = "DATA_SOURCE_STATUS_CHANGED"
+EVENT_DATA_SOURCE_REVOKED = "DATA_SOURCE_REVOKED"
+EVENT_DATASET_APPROVAL_STATUS_CHANGED = "DATASET_APPROVAL_STATUS_CHANGED"
+EVENT_DATASET_EXPORT_ACCESSED = "DATASET_EXPORT_ACCESSED"
+EVENT_DATASET_EXPORT_BLOCKED = "DATASET_EXPORT_BLOCKED"
+
+# Phase 4B-2 Privacy Engineering & DPDP Event Types
+EVENT_PII_DETECTED_AND_SCRUBBED = "PII_DETECTED_AND_SCRUBBED"
+EVENT_RAW_STAGING_RETENTION_PURGE = "RAW_STAGING_RETENTION_PURGE"
+EVENT_DATASET_RECORD_ERASURE = "DATASET_RECORD_ERASURE"
+EVENT_DATASET_ERASURE_FAILED = "DATASET_ERASURE_FAILED"
+EVENT_SOURCE_PURPOSE_BLOCKED = "SOURCE_PURPOSE_BLOCKED"
+EVENT_RETENTION_LEGAL_HOLD_APPLIED = "RETENTION_LEGAL_HOLD_APPLIED"
+EVENT_SECRET_ROTATED = "SECRET_ROTATED"
+
 
 def canonical_serialize_payload(payload: Dict[str, Any]) -> str:
     """Deterministically serialize payload dictionary to a canonical JSON string.
@@ -362,3 +379,157 @@ def get_audit_summary(db: Session) -> AuditSummaryResponse:
         is_chain_intact=verification.is_valid,
         event_counts_by_type=event_counts,
     )
+
+
+class AuditMerkleTree:
+    """Cryptographic binary Merkle Tree over audit events."""
+
+    def __init__(self, leaf_hashes: List[str]):
+        if not leaf_hashes:
+            self.root = hashlib.sha256(b"EMPTY_AUDIT_TREE").hexdigest()
+            self.levels: List[List[str]] = [[self.root]]
+            self.leaf_hashes: List[str] = []
+            return
+
+        self.leaf_hashes = leaf_hashes
+        self.levels = [leaf_hashes]
+        current = leaf_hashes
+
+        while len(current) > 1:
+            next_level: List[str] = []
+            for i in range(0, len(current), 2):
+                left = current[i]
+                right = current[i + 1] if i + 1 < len(current) else left
+                combined = left + right
+                parent_hash = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+                next_level.append(parent_hash)
+            self.levels.append(next_level)
+            current = next_level
+
+        self.root = current[0]
+
+    def get_proof(self, index: int) -> List[Dict[str, str]]:
+        """Generate audit inclusion proof for a leaf index."""
+        if index < 0 or index >= len(self.leaf_hashes):
+            return []
+
+        proof: List[Dict[str, str]] = []
+        cur_idx = index
+        for level in self.levels[:-1]:
+            is_right = cur_idx % 2 == 1
+            sibling_index = cur_idx - 1 if is_right else cur_idx + 1
+            if sibling_index < len(level):
+                sibling_hash = level[sibling_index]
+            else:
+                sibling_hash = level[cur_idx]
+
+            proof.append({
+                "position": "left" if is_right else "right",
+                "hash": sibling_hash,
+            })
+            cur_idx = cur_idx // 2
+        return proof
+
+    @staticmethod
+    def verify_proof(leaf_hash: str, proof: List[Dict[str, str]], root_hash: str) -> bool:
+        """Verify that a leaf hash is part of the Merkle tree with given root hash."""
+        current = leaf_hash
+        for item in proof:
+            sibling = item["hash"]
+            if item["position"] == "left":
+                combined = sibling + current
+            else:
+                combined = current + sibling
+            current = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+        return current == root_hash
+
+
+class ExternalAuditAnchorService:
+    """External tamper-evident anchoring and Merkle epoch management (Phase 4B-7)."""
+
+    @staticmethod
+    def anchor_epoch(
+        db: Session,
+        actor_id: str = "SYSTEM_ANCHOR",
+    ):
+        """Anchor current unanchored audit event sequence into an immutable Merkle root epoch."""
+        from app.models.audit import AuditAnchorEpochModel
+
+        latest_epoch = db.query(AuditAnchorEpochModel).order_by(AuditAnchorEpochModel.epoch_number.desc()).first()
+        start_seq = (latest_epoch.end_sequence + 1) if latest_epoch else 1
+        epoch_num = (latest_epoch.epoch_number + 1) if latest_epoch else 1
+
+        events = (
+            db.query(AuditEventModel)
+            .filter(AuditEventModel.sequence_number >= start_seq)
+            .order_by(AuditEventModel.sequence_number.asc())
+            .all()
+        )
+
+        if not events:
+            if latest_epoch:
+                return latest_epoch
+            events = []
+
+        leaf_hashes = [e.current_hash for e in events]
+        merkle_tree = AuditMerkleTree(leaf_hashes)
+        root_hash = merkle_tree.root
+        end_seq = events[-1].sequence_number if events else start_seq
+
+        manifest = {
+            "epoch_number": epoch_num,
+            "merkle_root_hash": root_hash,
+            "start_sequence": start_seq,
+            "end_sequence": end_seq,
+            "event_count": len(events),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "algorithm": "SHA-256",
+        }
+
+        token = {
+            "tsa_provider": "PropVal-Simulated-RFC3161-TSA",
+            "token_format": "RFC-3161-ASN1-SIMULATED",
+            "hash_algorithm": "SHA-256",
+            "imprint_digest": root_hash,
+            "status": "ATTESTED_IN_LOCAL_SANDBOX",
+            "external_storage_tier": "LOCAL_APPEND_ONLY_REGISTRY",
+            "institutional_disclaimer": (
+                "Local cryptographic anchoring active. Live RFC 3161 TSA counterparty integration and "
+                "cloud WORM storage (e.g. AWS S3 Object Lock) require institutional counterparty credential provisioning."
+            ),
+        }
+
+        epoch_record = AuditAnchorEpochModel(
+            id=str(uuid.uuid4()),
+            epoch_number=epoch_num,
+            merkle_root_hash=root_hash,
+            start_sequence=start_seq,
+            end_sequence=end_seq,
+            event_count=len(events),
+            anchor_manifest=json.dumps(manifest, sort_keys=True),
+            anchor_token=json.dumps(token, sort_keys=True),
+            anchored_by=actor_id,
+            anchored_at=datetime.now(timezone.utc),
+        )
+        db.add(epoch_record)
+        db.commit()
+        db.refresh(epoch_record)
+        return epoch_record
+
+    @staticmethod
+    def list_anchors(
+        db: Session,
+        limit: int = 20,
+        offset: int = 0,
+    ):
+        """Retrieve paginated Merkle anchor epochs."""
+        from app.models.audit import AuditAnchorEpochModel
+
+        return (
+            db.query(AuditAnchorEpochModel)
+            .order_by(AuditAnchorEpochModel.epoch_number.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+

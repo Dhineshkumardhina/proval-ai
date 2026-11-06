@@ -75,6 +75,8 @@ class MLTrainingRequest(BaseModel):
     """Request payload to initiate ML model training on an ingested dataset."""
 
     datasetId: str = Field(..., validation_alias="datasetId", serialization_alias="datasetId")
+    versionId: Optional[str] = Field(default=None, validation_alias="versionId", serialization_alias="versionId")
+    approvedBy: Optional[str] = Field(default=None, validation_alias="approvedBy", serialization_alias="approvedBy")
     algorithm: str = Field(default="CatBoostRegressor", description="Algorithm to train: CatBoostRegressor, RandomForest, LinearRegression")
     hyperparameters: Optional[Dict[str, Any]] = None
     targetVariable: str = Field(default="transaction_price", validation_alias="targetVariable", serialization_alias="targetVariable")

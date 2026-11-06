@@ -46,6 +46,7 @@ class ValuationCaseCreate(BaseModel):
     city: str = Field(default="Bengaluru", validation_alias="city", serialization_alias="city")
     pincode: str = Field(default="560001", validation_alias="pincode", serialization_alias="pincode")
     branch: str = Field(default="Main Lending Branch", validation_alias="branch", serialization_alias="branch")
+    institutionId: Optional[str] = Field(default=None, validation_alias="institutionId", serialization_alias="institutionId")
 
     carpetAreaSqFt: float = Field(..., gt=0, validation_alias="carpetAreaSqFt", serialization_alias="carpetAreaSqFt")
     superBuiltUpAreaSqFt: float = Field(..., ge=0, validation_alias="superBuiltUpAreaSqFt", serialization_alias="superBuiltUpAreaSqFt")
@@ -66,6 +67,11 @@ class ValuationCaseCreate(BaseModel):
     ltvRatioPct: float = Field(default=75.0, ge=30.0, le=90.0, validation_alias="ltvRatioPct", serialization_alias="ltvRatioPct")
     legalRiskPenaltyPct: float = Field(default=0.0, ge=0.0, le=100.0, validation_alias="legalRiskPenaltyPct", serialization_alias="legalRiskPenaltyPct")
     assignedUnderwriter: str = Field(default="V. Sundaram (Sr. Underwriter)", validation_alias="assignedUnderwriter", serialization_alias="assignedUnderwriter")
+
+    # Phase 7B: Pilot Case Management
+    assignedValuer: Optional[str] = Field(default="Empaneled Field Valuer", validation_alias="assignedValuer", serialization_alias="assignedValuer")
+    reviewingCreditOfficer: Optional[str] = Field(default="", validation_alias="reviewingCreditOfficer", serialization_alias="reviewingCreditOfficer")
+    caseReference: Optional[str] = Field(default=None, validation_alias="caseReference", serialization_alias="caseReference")
 
     reraRegistration: Optional[str] = Field(default="", validation_alias="reraRegistration", serialization_alias="reraRegistration")
     bbmpPlanApprovalNo: Optional[str] = Field(default="", validation_alias="bbmpPlanApprovalNo", serialization_alias="bbmpPlanApprovalNo")
@@ -117,6 +123,8 @@ class CaseStatusUpdate(BaseModel):
 
     status: str = Field(..., description="Target status (APPROVED, REVIEW_REQUIRED, etc.)")
     auditNote: Optional[str] = Field(default=None, validation_alias="auditNote", serialization_alias="auditNote")
+    humanSignOffBy: Optional[str] = Field(default=None, validation_alias="humanSignOffBy", serialization_alias="humanSignOffBy")
+    humanSignOffNotes: Optional[str] = Field(default="", validation_alias="humanSignOffNotes", serialization_alias="humanSignOffNotes")
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -161,6 +169,20 @@ class ValuationCaseResponse(BaseModel):
     ltvRatioPct: float = Field(default=75.0, validation_alias="ltvRatioPct", serialization_alias="ltvRatioPct")
     legalRiskPenaltyPct: float = Field(default=0.0, validation_alias="legalRiskPenaltyPct", serialization_alias="legalRiskPenaltyPct")
     assignedUnderwriter: str = Field(..., validation_alias="assignedUnderwriter", serialization_alias="assignedUnderwriter")
+    institutionId: Optional[str] = Field(default=None, validation_alias="institutionId", serialization_alias="institutionId")
+
+    # Phase 7B: Pilot Governance & Advisory Tracking
+    caseReference: Optional[str] = Field(default=None, validation_alias="caseReference", serialization_alias="caseReference")
+    assignedValuer: str = Field(default="Empaneled Field Valuer", validation_alias="assignedValuer", serialization_alias="assignedValuer")
+    reviewingCreditOfficer: str = Field(default="", validation_alias="reviewingCreditOfficer", serialization_alias="reviewingCreditOfficer")
+    valuationEngineVersion: str = Field(default="hedonic-scorecard-v0.2.0", validation_alias="valuationEngineVersion", serialization_alias="valuationEngineVersion")
+    valuationMethodology: str = Field(default="DETERMINISTIC_HEDONIC", validation_alias="valuationMethodology", serialization_alias="valuationMethodology")
+    advisoryClassification: str = Field(default="ADVISORY_ONLY", validation_alias="advisoryClassification", serialization_alias="advisoryClassification")
+    divergencePct: float = Field(default=0.0, validation_alias="divergencePct", serialization_alias="divergencePct")
+    requiresSeniorReview: bool = Field(default=False, validation_alias="requiresSeniorReview", serialization_alias="requiresSeniorReview")
+    humanSignOffBy: Optional[str] = Field(default=None, validation_alias="humanSignOffBy", serialization_alias="humanSignOffBy")
+    humanSignOffDate: Optional[str] = Field(default=None, validation_alias="humanSignOffDate", serialization_alias="humanSignOffDate")
+    humanSignOffNotes: Optional[str] = Field(default="", validation_alias="humanSignOffNotes", serialization_alias="humanSignOffNotes")
 
     createdAt: str = Field(..., validation_alias="createdAt", serialization_alias="createdAt")
     lastUpdated: str = Field(..., validation_alias="lastUpdated", serialization_alias="lastUpdated")

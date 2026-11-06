@@ -75,6 +75,9 @@ def trigger_training(
         dataset_id=req.datasetId,
         algorithm=req.algorithm,
         user_name=f"{user.name} ({user.role})",
+        version_id=req.versionId,
+        approved_by=req.approvedBy,
+        user_role=user.role,
     )
 
     return MLModelSummaryResponse(

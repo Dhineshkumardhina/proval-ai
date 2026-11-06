@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Float, Integer, DateTime
+from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -17,6 +17,7 @@ class PropertyRecord(Base):
     __tablename__ = "properties"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    institution_id = Column(String(36), ForeignKey("institutions.id", ondelete="SET NULL"), nullable=True, index=True)
     application_no = Column(String(64), unique=True, index=True, nullable=False)
     project_name = Column(String(255), nullable=False)
     unit_address = Column(String(500), nullable=False)
@@ -54,4 +55,5 @@ class PropertyRecord(Base):
 
     # Relationships
     valuation_cases = relationship("ValuationCaseModel", back_populates="property", cascade="all, delete-orphan")
+    institution = relationship("InstitutionModel", backref="properties")
 
