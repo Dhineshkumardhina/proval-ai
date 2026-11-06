@@ -131,7 +131,7 @@ export const GisMapCanvas: React.FC<GisMapCanvasProps> = ({
                 strokeDasharray="6,4"
               />
               <text x="240" y="145" fill="#5EEAD4" fontSize="12" fontWeight="600" className="label-caps font-mono">
-                SRO GUIDELINE JURISDICTION: {currentCase.locality.toUpperCase()} [₹{currentCase.circleRatePerSqFt}/sq ft]
+                DEMO GUIDELINE JURISDICTION: {currentCase.locality.toUpperCase()} [₹{currentCase.circleRatePerSqFt}/sq ft]
               </text>
             </g>
           )}
@@ -217,7 +217,7 @@ export const GisMapCanvas: React.FC<GisMapCanvasProps> = ({
                 opacity="0.4"
               />
               <text x="500" y="125" fill="#60A5FA" fontSize="10" textAnchor="middle">
-                1.0 km SRO Comparable Benchmark
+                1.0 km Sample Comparable Benchmark
               </text>
 
               {/* 2.0 km Radius */}

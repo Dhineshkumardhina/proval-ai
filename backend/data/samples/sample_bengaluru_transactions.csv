@@ -1,0 +1,22 @@
+City,Locality,Project_Name,Carpet_Area,Area_Unit,Sale_Date,Transaction_Price,Property_Type,Floor_No,Circle_Rate,Latitude,Longitude
+Bengaluru,Whitefield,Sobha Dream Acres,1215,sqft,2024-03-15,₹1.20 Cr,High-Rise Apartment,14,7200,12.9352,77.7214
+Bengaluru,Whitefield,Prestige Lakeside Habitat,1250,sqft,2024-04-10,13500000,High-Rise Apartment,12,7800,12.9511,77.7423
+Bengaluru,Indiranagar,Adarsh Palace,1650,sqft,2024-05-20,28500000,High-Rise Apartment,4,14000,12.9784,77.6408
+Bengaluru,Koramangala,Raheja Residency,1400,sqft,2024-06-12,22000000,High-Rise Apartment,6,13500,12.9352,77.6245
+Bengaluru,Bellandur,Sun City Apartments,1100,sqft,2024-07-08,95 Lakhs,High-Rise Apartment,3,7500,12.9260,77.6762
+Bengaluru,Sarjapur Road,Godrej Park Retreat,1150,sqft,2024-08-19,10500000,High-Rise Apartment,8,6800,12.9081,77.6890
+Bengaluru,HSR Layout,Purva Fairmont,1350,sqft,2024-09-25,17500000,High-Rise Apartment,5,10500,12.9121,77.6446
+Bengaluru,Whitefield,Brigade Cosmopolis,1550,sqft,2024-10-14,19500000,High-Rise Apartment,11,9200,12.9698,77.7499
+Bengaluru,Whitefield,Sobha Rose,140 sq yd,sq yd,2024-11-05,16000000,Gated Villa,2,8000,12.9601,77.7302
+Bengaluru,Electronic City,Ajmera Infinity,1050,sqft,2024-12-01,7200000,High-Rise Apartment,7,5500,12.8399,77.6770
+Bengaluru,Hebbal,Godrej Platinum,2200,sqft,2025-01-18,34000000,High-Rise Apartment,16,12500,13.0358,77.5970
+Bengaluru,Yelahanka,Purva Venezia,1320,sqft,2025-02-14,11800000,High-Rise Apartment,9,6500,13.1007,77.5963
+Bengaluru,Bannerghatta Road,Mantri Pinnacle,1850,sqft,2025-03-22,26000000,High-Rise Apartment,24,11000,12.8984,77.5991
+Bengaluru,JP Nagar,Brigade Millennium,1280,sqft,2025-04-11,14200000,High-Rise Apartment,8,8500,12.9063,77.5857
+Bengaluru,Whitefield,Prestige Lakeside Habitat,1250,sqft,2024-04-10,13500000,High-Rise Apartment,12,7800,12.9511,77.7423
+Bengaluru,Whitefield,Invalid Price Tower,1200,sqft,2024-05-01,NaN,High-Rise Apartment,5,7000,12.9500,77.7400
+Bengaluru,Koramangala,Tiny Area Plot,20,sqft,2024-05-02,5000000,High-Rise Apartment,1,12000,12.9300,77.6200
+Bengaluru,Indiranagar,Absurd Outlier Palace,100,sqft,2024-05-03,80000000,High-Rise Apartment,1,14000,12.9700,77.6400
+Bengaluru,Bellandur,Future Time Travel Flat,1200,sqft,2029-12-31,12000000,High-Rise Apartment,3,7500,12.9200,77.6700
+Bengaluru,Sarjapur,London Coordinates Flat,1200,sqft,2024-06-01,11000000,High-Rise Apartment,2,7000,51.5074,-0.1278
+

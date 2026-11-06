@@ -1,0 +1,118 @@
+{
+  "sequential_endpoints": [
+    {
+      "endpoint": "GET /api/v1/health",
+      "iterations": 30,
+      "mean_latency_ms": 5.75,
+      "median_p50_ms": 5.58,
+      "p95_ms": 7.24,
+      "p99_ms": 8.01,
+      "min_ms": 4.61,
+      "max_ms": 8.3,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/cases",
+      "iterations": 30,
+      "mean_latency_ms": 30.59,
+      "median_p50_ms": 23.12,
+      "p95_ms": 43.94,
+      "p99_ms": 154.83,
+      "min_ms": 20.71,
+      "max_ms": 196.79,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/cases/case-blr-89412",
+      "iterations": 30,
+      "mean_latency_ms": 6.16,
+      "median_p50_ms": 6.0,
+      "p95_ms": 6.91,
+      "p99_ms": 8.34,
+      "min_ms": 5.03,
+      "max_ms": 8.92,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "POST /api/v1/valuation/estimate",
+      "iterations": 30,
+      "mean_latency_ms": 4.62,
+      "median_p50_ms": 4.49,
+      "p95_ms": 5.71,
+      "p99_ms": 6.0,
+      "min_ms": 3.86,
+      "max_ms": 6.11,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/comparables",
+      "iterations": 30,
+      "mean_latency_ms": 5.39,
+      "median_p50_ms": 5.3,
+      "p95_ms": 6.26,
+      "p99_ms": 7.8,
+      "min_ms": 4.33,
+      "max_ms": 8.39,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/ml/status",
+      "iterations": 30,
+      "mean_latency_ms": 4.97,
+      "median_p50_ms": 4.66,
+      "p95_ms": 5.79,
+      "p99_ms": 9.97,
+      "min_ms": 4.06,
+      "max_ms": 11.66,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/ml/uncertainty/status",
+      "iterations": 30,
+      "mean_latency_ms": 4.14,
+      "median_p50_ms": 4.07,
+      "p95_ms": 4.96,
+      "p99_ms": 5.29,
+      "min_ms": 3.44,
+      "max_ms": 5.37,
+      "error_rate_pct": 0.0
+    },
+    {
+      "endpoint": "GET /api/v1/ai/status",
+      "iterations": 30,
+      "mean_latency_ms": 2.78,
+      "median_p50_ms": 2.73,
+      "p95_ms": 3.29,
+      "p99_ms": 3.38,
+      "min_ms": 2.25,
+      "max_ms": 3.42,
+      "error_rate_pct": 0.0
+    }
+  ],
+  "concurrency_25": {
+    "concurrency_level": 25,
+    "total_requests": 200,
+    "wall_duration_sec": 6.979,
+    "throughput_rps": 28.66,
+    "mean_latency_ms": 839.35,
+    "median_p50_ms": 836.3,
+    "p95_ms": 1166.31,
+    "p99_ms": 1400.5,
+    "error_rate_pct": 0.0,
+    "cpu_utilization_pct": 53.3,
+    "memory_rss_mb": 286.36
+  },
+  "concurrency_50": {
+    "concurrency_level": 50,
+    "total_requests": 250,
+    "wall_duration_sec": 7.499,
+    "throughput_rps": 33.34,
+    "mean_latency_ms": 1383.15,
+    "median_p50_ms": 1457.65,
+    "p95_ms": 2316.68,
+    "p99_ms": 3050.7,
+    "error_rate_pct": 0.0,
+    "cpu_utilization_pct": 42.6,
+    "memory_rss_mb": 292.77
+  }
+}

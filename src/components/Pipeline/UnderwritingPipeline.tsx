@@ -16,7 +16,7 @@ import {
   Layers,
   PlusCircle,
 } from 'lucide-react';
-import { ValuationCase } from '../../types/valuation';
+import { ValuationCase, CREDIBILITY_LABELS } from '../../types/valuation';
 import { formatIndianCurrency } from '../../utils/valuationEngine';
 
 interface UnderwritingPipelineProps {
@@ -54,6 +54,12 @@ export const UnderwritingPipeline: React.FC<UnderwritingPipelineProps> = ({
 
   return (
     <div className="space-y-4">
+      {/* Synthetic Data Banner */}
+      <div className="p-2.5 bg-[#FEF3C7] border border-[#FDE68A] rounded text-[11px] text-[#B45309] font-medium flex items-center justify-between">
+        <span>Portfolio Notice: All cases are synthetic demonstration data for UI evaluation. No actual borrower or registry transactions are present.</span>
+        <span className="font-semibold px-2 py-0.5 rounded bg-white/60 border border-[#FDE68A]">{CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC}</span>
+      </div>
+
       {/* Top Portfolio Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
@@ -61,7 +67,7 @@ export const UnderwritingPipeline: React.FC<UnderwritingPipelineProps> = ({
           <p className="text-xl font-bold font-mono tabular-nums text-[#142B4A] mt-0.5">
             {formatIndianCurrency(totalPipelineValue, 'short')}
           </p>
-          <span className="text-[11px] text-[#64748B]">{cases.length} Collateral Files Active</span>
+          <span className="text-[11px] text-[#64748B]">{cases.length} Files ({CREDIBILITY_LABELS.DATA_SOURCE_SYNTHETIC})</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
@@ -69,7 +75,7 @@ export const UnderwritingPipeline: React.FC<UnderwritingPipelineProps> = ({
           <p className="text-xl font-bold font-mono tabular-nums text-[#15803D] mt-0.5">
             {readyCount} Files
           </p>
-          <span className="text-[11px] text-[#15803D] font-medium">Clear Title & OCR Verified</span>
+          <span className="text-[11px] text-[#15803D] font-medium">Clear Title (Demonstration Check)</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-md border border-[#E2E8F0] shadow-sm">
@@ -157,8 +163,8 @@ export const UnderwritingPipeline: React.FC<UnderwritingPipelineProps> = ({
                 <th className="py-2.5 px-3 font-semibold text-right">Requested Loan</th>
                 <th className="py-2.5 px-3 font-semibold text-right">Declared Price</th>
                 <th className="py-2.5 px-3 font-semibold text-center">Circle Rate Dev</th>
-                <th className="py-2.5 px-3 font-semibold text-center">Title & OCR</th>
-                <th className="py-2.5 px-3 font-semibold text-center">Appraisal State</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Title & OCR Check</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Valuation State</th>
                 <th className="py-2.5 px-3 font-semibold text-center">Action</th>
               </tr>
             </thead>

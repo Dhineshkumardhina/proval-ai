@@ -1,0 +1,69 @@
+# syntax=docker/dockerfile:1
+# -----------------------------------------------------------------------------
+# PropVal AI Institutional Backend — Production Multi-Stage Dockerfile
+# Hardened for non-root execution, minimal attack surface, and container security.
+# -----------------------------------------------------------------------------
+
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+# Install build essentials for compiling C/C++ extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies to precompiled wheels cache
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir psycopg2-binary==2.9.9 && \
+    pip wheel --no-cache-dir --wheel-dir=/build/wheels -r requirements.txt
+
+# -----------------------------------------------------------------------------
+# Production Runtime Stage
+# -----------------------------------------------------------------------------
+FROM python:3.11-slim AS runtime
+
+# Create dedicated non-root application user and group (Principle of Least Privilege)
+RUN groupadd -g 10001 appgroup && \
+    useradd -u 10001 -g appgroup -s /bin/bash -m appuser
+
+WORKDIR /app
+
+# Install runtime shared libraries required by CatBoost/NumPy (libgomp) and curl for healthchecks
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy pre-built wheels and install without build tooling
+COPY --from=builder /build/wheels /wheels
+RUN pip install --no-cache-dir --no-index --find-links=/wheels /wheels/* && \
+    pip install --no-cache-dir psycopg2-binary==2.9.9 && \
+    rm -rf /wheels
+
+# Copy application source code and entrypoint
+COPY --chown=appuser:appgroup backend /app
+COPY --chown=appuser:appgroup docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Create directories for persistent local models, logs, and data with proper ownership
+RUN mkdir -p /app/data /app/models /app/logs && \
+    chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app \
+    PORT=8000
+
+EXPOSE 8000
+
+# Institutional container healthcheck using deep readiness probe
+HEALTHCHECK --interval=15s --timeout=5s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ready || exit 1
+
+ENTRYPOINT ["/app/entrypoint.sh"]

@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=71.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "propval-ai"
+version = "0.2.0"
+description = "Institutional Real Estate Valuation & Underwriting Platform for Indian Housing Finance Companies"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [
+    { name = "PropVal AI Engineering & Governance Team" }
+]
+dependencies = [
+    "fastapi==0.142.2",
+    "uvicorn[standard]==0.54.0",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "sqlalchemy==2.1.3",
+    "alembic==1.20.0",
+    "httpx==0.28.1",
+    "python-dotenv==1.2.4",
+    "pandas==3.0.6",
+    "openpyxl==3.1.5",
+    "catboost==1.2.10",
+    "shap==0.54.1",
+    "scikit-learn==1.9.1",
+    "numpy==2.5.3",
+    "bcrypt>=4.0.0",
+    "opentelemetry-api==1.45.2",
+    "opentelemetry-sdk==1.45.2",
+    "opentelemetry-exporter-otlp-proto-http==1.45.2",
+    "opentelemetry-instrumentation==0.66b2",
+    "opentelemetry-instrumentation-fastapi==0.66b2",
+    "opentelemetry-instrumentation-sqlalchemy==0.66b2",
+    "opentelemetry-instrumentation-httpx==0.66b2",
+    "psycopg2-binary>=2.9.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "pip-audit>=2.8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]
+asyncio_mode = "strict"
+

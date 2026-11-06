@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       id: 'STUDIO' as const,
       label: 'Valuation Studio',
-      description: 'Split-Screen XAI Engine',
+      description: 'Provisional Rule-Based Studio',
       icon: Compass,
     },
     {
@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       id: 'GOVERNANCE' as const,
       label: 'Model Governance',
-      description: 'Compliance & Metrics State',
+      description: 'Blueprint & Governance State',
       icon: Cpu,
     },
   ];
@@ -79,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </span>
               </div>
               <p className="text-[10.5px] text-[#7D93B7] font-medium leading-tight">
-                Collateral Underwriting & XAI
+                Collateral Underwriting & Valuation
               </p>
             </div>
           </div>
@@ -174,11 +174,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex items-center justify-between text-[#7D93B7]">
           <span>Valuation Core:</span>
           <span className="font-mono text-white text-[10px] bg-[#1E3A5F] px-1.5 py-0.2 rounded font-semibold">
-            v0.1.0-alpha (Heuristic)
+            v0.1.0-alpha (Rule-Based)
           </span>
         </div>
         <p className="text-[10px] text-[#64748B] leading-tight">
-          Rule-based valuation prototype. Synthetic demonstration data.
+          Provisional rule-based estimation. Synthetic demonstration data.
         </p>
       </div>
     </aside>

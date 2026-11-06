@@ -15,6 +15,7 @@ import { ValuationCase } from '../types/valuation';
 export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   {
     id: 'case-blr-89412',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-BLR-2026-89412',
     borrowerName: 'Rajesh & Priya Sengupta',
     coBorrowerName: 'Priya Sengupta',
@@ -56,6 +57,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-VRT-2026-BK1-11842',
         regDate: '18-Oct-2026',
         propertyName: 'Sobha Dream Acres (Wing C-1204)',
@@ -72,6 +74,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-2',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-VRT-2026-BK1-09411',
         regDate: '24-Sep-2026',
         propertyName: 'Prestige Lakeside Habitat (Tower 11-1502)',
@@ -88,6 +91,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-3',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-KRP-2026-BK1-08102',
         regDate: '09-Aug-2026',
         propertyName: 'Brigade Cornerstone Utopia (Serene-0901)',
@@ -104,6 +108,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-4',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-VRT-2026-BK1-06399',
         regDate: '14-Jul-2026',
         propertyName: 'Godrej Air NXT (Wing A-1103)',
@@ -120,6 +125,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-5',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-KRP-2026-BK1-04112',
         regDate: '02-Jun-2026',
         propertyName: 'Assetz Marq 3.0 (Tower 4-0702)',
@@ -139,38 +145,38 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       {
         label: 'SRO Registered Document No',
         applicantDeclared: 'BK-1/11492/2024 (SRO Varthur)',
-        sroIndexExtract: 'BK-1/11492/2024 Verified against Kaveri 2.0 DB',
+        sroIndexExtract: 'BK-1/11492/2024 Simulated match against Kaveri 2.0 template (synthetic demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Carpet Area (RERA Mandate)',
         applicantDeclared: '1,215 sq ft (112.87 sq m)',
-        sroIndexExtract: '1,215 sq ft (Sanction Schedule C Sheet 4)',
+        sroIndexExtract: '1,215 sq ft (Sanction Schedule C Sheet 4 - Demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Stamp Duty Paid Consideration',
         applicantDeclared: '₹1,45,00,000 (Agreement for Sale)',
-        sroIndexExtract: '₹1,42,80,000 (Indexed consideration value)',
+        sroIndexExtract: '₹1,42,80,000 (Indexed consideration value - Demo)',
         matchStatus: 'MATCHED',
         notes: 'Minor variance ₹2.2L within 1.5% acceptable stamp discount band',
       },
       {
         label: 'Khata Status (Revenue Dept)',
         applicantDeclared: 'e-Khata Certificate No. BBMP/EZ/KH/4412',
-        sroIndexExtract: 'e-Khata verified active with zero tax dues',
+        sroIndexExtract: 'e-Khata simulated active with zero tax dues (Demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Encumbrance Certificate (30 Years)',
         applicantDeclared: 'Nil Encumbrance (Form 15 issued 2026)',
-        sroIndexExtract: 'Search verified from 1994 to 2026: No prior mortgage',
+        sroIndexExtract: 'Search verified from 1994 to 2026: No prior mortgage (Demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Occupancy Certificate (OC)',
         applicantDeclared: 'OC Issued: BBMP/OC/2023/1892',
-        sroIndexExtract: 'Full OC on record with Bruhat Bengaluru Mahanagara Palike',
+        sroIndexExtract: 'Full OC on record with Bruhat Bengaluru Mahanagara Palike (Demo)',
         matchStatus: 'MATCHED',
       },
     ],
@@ -232,6 +238,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   },
   {
     id: 'case-mum-44120',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-MUM-2026-44120',
     borrowerName: 'Dr. Ananya Mukherjee',
     coBorrowerName: 'Kunal Mukherjee',
@@ -273,6 +280,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-m1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-KUR-2026-BK1-04918',
         regDate: '12-Oct-2026',
         propertyName: 'Hiranandani Gardens (Kew 1902)',
@@ -289,6 +297,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-m2',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-KUR-2026-BK1-03221',
         regDate: '15-Sep-2026',
         propertyName: 'L&T Emerald Isle (Tower 7-1601)',
@@ -305,6 +314,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-m3',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-AND-2026-BK1-02109',
         regDate: '28-Jul-2026',
         propertyName: 'Kanakia Silicon Valley (Wing B-1404)',
@@ -321,6 +331,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-m4',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-KUR-2026-BK1-01188',
         regDate: '04-Jun-2026',
         propertyName: 'Godrej Urban Park (Tower 2-1102)',
@@ -340,32 +351,32 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       {
         label: 'SRO Registered Document No',
         applicantDeclared: 'BK-1/44910/2021 (SRO Kurla)',
-        sroIndexExtract: 'BK-1/44910/2021 Verified in IGR Maharashtra',
+        sroIndexExtract: 'BK-1/44910/2021 Simulated match in IGR template (synthetic demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Carpet Area (MOFA / RERA)',
         applicantDeclared: '1,480 sq ft',
-        sroIndexExtract: '1,480 sq ft (Includes 140 sq ft enclosed balcony)',
+        sroIndexExtract: '1,480 sq ft (Includes 140 sq ft enclosed balcony - Demo)',
         matchStatus: 'MATCHED',
         notes: 'Enclosed balcony regularized under MCGM Circular 2018',
       },
       {
         label: 'Stamp Duty Paid Consideration',
         applicantDeclared: '₹3,90,00,000',
-        sroIndexExtract: '₹3,75,00,000 (Past registry consideration)',
+        sroIndexExtract: '₹3,75,00,000 (Past registry consideration - Demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Society Share Certificate',
         applicantDeclared: 'Somerset CHSL Share Cert #419',
-        sroIndexExtract: 'Valid share certificate verified, no dues from CHS',
+        sroIndexExtract: 'Valid share certificate simulated, no dues from CHS (Demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Encumbrance Certificate',
         applicantDeclared: 'Nil Encumbrance search report submitted',
-        sroIndexExtract: 'Clean search report from 1986 to 2026 verified',
+        sroIndexExtract: 'Clean search report from 1986 to 2026 simulated (Demo)',
         matchStatus: 'MATCHED',
       },
     ],
@@ -402,6 +413,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   },
   {
     id: 'case-del-11893',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-DEL-2026-11893',
     borrowerName: 'Vikramjit Singh Khurana',
     coBorrowerName: 'Simran Khurana',
@@ -443,6 +455,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-d1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-GGM-2026-BK1-09112',
         regDate: '02-Oct-2026',
         propertyName: 'Plot 402 DLF Ph 5 (1st Floor)',
@@ -459,6 +472,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-d2',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-GGM-2026-BK1-07441',
         regDate: '11-Aug-2026',
         propertyName: 'Plot 388 DLF Ph 5 (3rd Floor)',
@@ -511,6 +525,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   },
   {
     id: 'case-hyd-90214',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-HYD-2026-90214',
     borrowerName: 'K. Venkat Raman & Swapna',
     coBorrowerName: 'Swapna K.',
@@ -552,6 +567,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-h1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-SER-2026-BK1-08192',
         regDate: '15-Oct-2026',
         propertyName: 'My Home Bhooja (Block C-1801)',
@@ -568,6 +584,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       },
       {
         id: 'comp-h2',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-SER-2026-BK1-06214',
         regDate: '20-Sep-2026',
         propertyName: 'Jayabheri The Peak (Tower 2-2004)',
@@ -587,13 +604,13 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       {
         label: 'SRO Registered Document No',
         applicantDeclared: 'BK-1/8842/2023 (SRO Serilingampally)',
-        sroIndexExtract: 'Verified in Dharani/Registration & Stamps TS',
+        sroIndexExtract: 'Simulated match in Dharani template (synthetic demo)',
         matchStatus: 'MATCHED',
       },
       {
         label: 'Carpet Area (RERA)',
         applicantDeclared: '1,890 sq ft',
-        sroIndexExtract: '1,890 sq ft matched with registered deed',
+        sroIndexExtract: '1,890 sq ft matched with registered deed (Demo)',
         matchStatus: 'MATCHED',
       },
     ],
@@ -617,6 +634,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   },
   {
     id: 'case-pun-66301',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-PUN-2026-66301',
     borrowerName: 'Nitin Deshmukh',
     coBorrowerName: 'Sneha Deshmukh',
@@ -658,6 +676,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-p1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-MUL-2026-BK1-05120',
         regDate: '10-Oct-2026',
         propertyName: 'Godrej 24 (Tower Coral-0502)',
@@ -677,7 +696,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       {
         label: 'SRO Registered Document No',
         applicantDeclared: 'BK-1/4120/2024 (SRO Mulshi)',
-        sroIndexExtract: 'Verified active with PMRDA registry',
+        sroIndexExtract: 'Simulated active record with PMRDA template (synthetic demo)',
         matchStatus: 'MATCHED',
       },
     ],
@@ -701,6 +720,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
   },
   {
     id: 'case-che-32095',
+    dataSource: 'synthetic-demo',
     applicationNo: 'HFC-CHE-2026-32095',
     borrowerName: 'S. Karthik',
     coBorrowerName: 'Deepa Karthik',
@@ -742,6 +762,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
     comparables: [
       {
         id: 'comp-c1',
+        dataSource: 'synthetic-demo',
         sroRegNo: 'SRO-SEL-2026-BK1-03912',
         regDate: '12-Oct-2026',
         propertyName: 'Casagrand Zenith (Block B-0604)',
@@ -761,7 +782,7 @@ export const INITIAL_VALUATION_CASES: ValuationCase[] = [
       {
         label: 'SRO Registered Document No',
         applicantDeclared: 'BK-1/2918/2023 (SRO Selaiyur)',
-        sroIndexExtract: 'Verified in TNREGINET TN portal',
+        sroIndexExtract: 'Simulated match in TNREGINET template (synthetic demo)',
         matchStatus: 'MATCHED',
       },
     ],

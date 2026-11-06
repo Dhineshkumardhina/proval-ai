@@ -6,9 +6,26 @@
 export type RiskTier = 'LOW_RISK' | 'MODERATE_RISK' | 'HIGH_ALERT';
 export type CaseStatus = 'READY_FOR_APPROVAL' | 'REVIEW_REQUIRED' | 'HIGH_ALERT' | 'APPROVED' | 'REJECTED';
 export type PropertyType = 'High-Rise Apartment' | 'Gated Villa' | 'Independent Floor' | 'Commercial SCO';
+export type DataSourceType = 'synthetic-demo' | 'verified-registry' | 'pending-verification';
+
+export const CREDIBILITY_LABELS = {
+  ENGINE_TYPE: 'provisional rule-based estimation',
+  ENGINE_BADGE: 'Provisional Rule-Based Estimation',
+  ENGINE_TITLE: 'Provisional Rule-Based Valuation Engine',
+  DATA_SOURCE_SYNTHETIC: 'Synthetic demonstration data',
+  COMPARABLE_SYNTHETIC: 'Synthetic sample comparable, not verified transaction evidence',
+  UNCERTAINTY_NOTE: 'Rule-based indicative range, not a statistical interval',
+  CALIBRATION_STATUS: 'Not available: no calibrated model',
+  CONSISTENCY_SCORE: 'Rule Consistency Score (Heuristic, Uncalibrated)',
+  GOVERNANCE_UNVERIFIED: 'Pending verification',
+  GOVERNANCE_NOT_AVAILABLE: 'Not available',
+  LEDGER_STATUS: 'Not implemented (Local prototype state)',
+  AI_STATUS: 'Not connected (Demo prototype)',
+} as const;
 
 export interface ComparableDeed {
   id: string;
+  dataSource?: DataSourceType;
   sroRegNo: string;
   regDate: string;
   propertyName: string;
@@ -47,6 +64,7 @@ export interface FieldInspectionPhoto {
 
 export interface ValuationCase {
   id: string;
+  dataSource?: DataSourceType;
   applicationNo: string;
   borrowerName: string;
   coBorrowerName?: string;
